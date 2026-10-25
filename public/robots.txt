@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# [DOMAIN] – bei Domainwechsel anpassen
+Sitemap: https://www.deinkammerjaeger.de/sitemap-index.xml

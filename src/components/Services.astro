@@ -1,0 +1,275 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import AiBadge from './AiBadge.astro';
+import { services, company } from '../data/site';
+---
+
+<section class="section services" id="leistungen" aria-labelledby="leistungen-title">
+  <div class="container">
+    <header class="section-head section-head--split">
+      <div>
+        <span class="label" data-reveal>Leistungen</span>
+        <h2 id="leistungen-title" data-reveal style="--i:1">Schädlingsbekämpfung für jeden Befall</h2>
+      </div>
+      <p class="section-head__lead" data-reveal style="--i:2">
+        Vom Wespennest bis zum Rattenbefall: Tippen Sie auf einen Schädling für einen kurzen Steckbrief – und übernehmen Sie ihn direkt in Ihre Anfrage.
+      </p>
+    </header>
+
+    <ul class="services__grid">
+      {services.map((s, i) => (
+        <li class="card service" data-reveal style={`--i:${i % 4}`}>
+          <a class="service__link" href={`#lexikon-${s.id}`} data-lexikon-open aria-haspopup="dialog" aria-label={`${s.title}: Steckbrief öffnen`}>
+            <div class="service__media">
+              <Image src={s.image} alt={s.alt} widths={[400, 600, 800]} sizes="(min-width: 1024px) 290px, (min-width: 640px) 45vw, 100vw" format="webp" loading="lazy" />
+            </div>
+            <div class="service__body">
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+              <span class="service__more" aria-hidden="true">Steckbrief ansehen <Icon name="arrow-right" size={18} /></span>
+            </div>
+          </a>
+          <AiBadge />
+        </li>
+      ))}
+      <li class="services__other" data-reveal style="--i:3">
+        <p class="services__other-title">Ihr Schädling ist nicht dabei?</p>
+        <p>Rufen Sie uns an – wir sagen Ihnen ehrlich, ob und wie wir helfen können.</p>
+        <a class="btn btn--outline-light" href={company.phoneHref}><Icon name="phone" /><span>{company.phoneDisplay}</span></a>
+      </li>
+    </ul>
+  </div>
+
+  {services.map((s) => (
+    <dialog class="lex" id={`lexikon-${s.id}`} aria-labelledby={`lexikon-${s.id}-title`}>
+      <article class="lex__card">
+        <button type="button" class="lex__close" data-lexikon-close aria-label="Steckbrief schließen"><Icon name="x" size={20} /></button>
+        <div class="lex__media">
+          <Image src={s.image} alt={s.alt} widths={[600, 900]} sizes="(min-width: 640px) 560px, 100vw" format="webp" loading="lazy" />
+          <AiBadge position="bottom-left" />
+        </div>
+        <div class="lex__body">
+          <span class="label">Schädlings-Lexikon</span>
+          <h3 id={`lexikon-${s.id}-title`}>{s.title}</h3>
+          {s.latin && <p class="lex__latin">{s.latin}</p>}
+          {s.facts && (
+            <dl class="lex__facts">
+              {s.facts.map((f) => (
+                <div><dt>{f.label}</dt><dd>{f.text}</dd></div>
+              ))}
+            </dl>
+          )}
+          <div class="lex__actions">
+            <a class="lex__cta" href="#kontakt" data-pest={s.id} data-lexikon-cta>
+              <span>Hilfe bei {s.title} anfragen</span>
+              <span class="lex__arrow" aria-hidden="true"><Icon name="arrow-up-right" size={20} strokeWidth={2.25} /></span>
+            </a>
+            <a class="lex__phone" href={company.phoneHref}>oder anrufen: {company.phoneDisplay}</a>
+          </div>
+        </div>
+      </article>
+    </dialog>
+  ))}
+</section>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLAnchorElement>('[data-lexikon-open]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const dialog = document.getElementById(link.hash.slice(1)) as HTMLDialogElement | null;
+      if (!dialog?.showModal) return;
+      e.preventDefault();
+      dialog.showModal();
+      // Per Maus/Touch geöffnet → nach dem Schließen keinen Fokus-Zustand auf der Karte stehen lassen
+      if (e.detail > 0) dialog.addEventListener('close', () => link.blur(), { once: true });
+    });
+  });
+  document.querySelectorAll<HTMLDialogElement>('dialog.lex').forEach((dialog) => {
+    // Klick auf den abgedunkelten Hintergrund schließt
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+    dialog.querySelector('[data-lexikon-close]')?.addEventListener('click', () => dialog.close());
+    dialog.querySelector<HTMLAnchorElement>('[data-lexikon-cta]')?.addEventListener('click', (e) => {
+      const target = document.getElementById('kontakt');
+      if (!target) return;
+      e.preventDefault();
+      dialog.close();
+      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+      history.replaceState(null, '', '#kontakt');
+    });
+  });
+</script>
+
+<style>
+  .services__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 640px) { .services__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+  @media (min-width: 1024px) { .services__grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .service__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-card);
+  }
+  .service__link:focus-visible { outline-offset: 4px; }
+  .service__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    background: var(--dark);
+  }
+  .service__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease);
+  }
+  .service:hover .service__media img { transform: scale(1.05); }
+  .service__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    padding: 1.25rem 1.375rem 1.5rem;
+  }
+  .service__body p { color: var(--muted); font-size: 1rem; line-height: 1.55; }
+  .service__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--primary-dark);
+  }
+  .service__more .icon { transition: transform 0.25s var(--ease); }
+  .service:hover .service__more .icon { transform: translateX(4px); }
+
+
+  /* Lexikon-Overlay */
+  .lex {
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    background: #fff;
+    color: var(--dark);
+    box-shadow: 0 30px 80px rgba(10, 25, 40, 0.35);
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  .lex::backdrop { background: rgba(22, 30, 40, 0.6); backdrop-filter: blur(3px); }
+  .lex[open] { animation: lex-in 0.35s var(--ease); }
+  .lex[open]::backdrop { animation: lex-fade 0.35s ease; }
+  @keyframes lex-in { from { opacity: 0; transform: translateY(16px) scale(0.98); } }
+  @keyframes lex-fade { from { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .lex[open], .lex[open]::backdrop { animation: none; } }
+
+  .lex__card { position: relative; }
+  .lex__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--dark);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  .lex__close:hover { background: #fff; }
+  .lex__media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--dark); }
+  .lex__media img { width: 100%; height: 100%; object-fit: cover; }
+  .lex__body { padding: 1.5rem 1.5rem 1.75rem; }
+  .lex__body h3 { margin-top: 0.4rem; font-size: 1.75rem; letter-spacing: -0.02em; }
+  .lex__latin { margin-top: 0.15rem; color: var(--muted); font-style: italic; font-size: 0.9375rem; }
+  .lex__facts { margin: 1.25rem 0 0; display: grid; gap: 0; }
+  .lex__facts div {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.75rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .lex__facts dt { font-family: var(--font-display); font-weight: 700; font-size: 0.875rem; color: var(--primary-dark); padding-top: 0.1rem; }
+  .lex__facts dd { margin: 0; font-size: 0.975rem; line-height: 1.5; }
+  .lex__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .lex__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0.4rem 0.4rem 1.1rem;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.975rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  .lex__cta:hover { background: var(--primary-dark); }
+  .lex__arrow {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--primary-dark);
+  }
+  .lex__arrow :global(.icon) { transition: transform 0.3s var(--ease); }
+  .lex__cta:hover .lex__arrow :global(.icon),
+  .lex__cta:focus-visible .lex__arrow :global(.icon) { transform: translate(2px, -2px); }
+  .lex__phone { color: var(--muted); font-size: 0.9375rem; }
+  @media (max-width: 420px) {
+    .lex__facts div { grid-template-columns: 1fr; gap: 0.15rem; }
+  }
+
+  .services__other {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1.75rem;
+    border-radius: var(--radius-card);
+    background: var(--dark);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .services__other-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .services__other .btn { margin-top: 0.5rem; }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .services__other { grid-column: span 1; }
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import { withBase } from '../lib/url';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FloatingContact from '../components/FloatingContact.astro';
+import { company, seo, locations, openingHours } from '../data/site';
+import { isPlaceholder } from '../lib/format';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  /** Auf Unterseiten zeigen Menü-Anker auf die Startseite. */
+  home?: boolean;
+}
+
+const { title = seo.title, description = seo.description, home = false } = Astro.props;
+// Preview-Builds (GitHub Pages) nie indexieren
+const noindex = Astro.props.noindex || import.meta.env.PUBLIC_PREVIEW === 'true';
+
+const site = Astro.site ?? new URL('https://www.deinkammerjaeger.de');
+// Build-Format 'file' liefert /seite.html – Canonical wie in der Sitemap ohne Endung
+const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/'), site).href;
+const ogImage = new URL(withBase(seo.ogImage), site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'PestControl',
+  '@id': `${site.href}#business`,
+  name: company.name,
+  description: seo.description,
+  url: site.href,
+  logo: new URL(withBase('/favicon.svg'), site).href,
+  image: ogImage,
+  telephone: company.phoneE164,
+  ...(isPlaceholder(company.email) ? {} : { email: company.email }),
+  founder: { '@type': 'Person', name: company.owner },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: company.street,
+    postalCode: company.zip,
+    addressLocality: company.city,
+    addressRegion: company.region,
+    addressCountry: company.country,
+  },
+  areaServed: locations.map((l) => ({ '@type': 'City', name: l.name })),
+  sameAs: [company.instagram],
+  ...(openingHours.some((h) => isPlaceholder(h.time)) ? {} : { openingHours: openingHours.map((h) => `${h.days} ${h.time}`) }),
+};
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#3A3B3D" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={company.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <Header home={home} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <FloatingContact />
+
+    <script>
+      import '../scripts/main.ts';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+---
+import Icon from './Icon.astro';
+import { advantages, company } from '../data/site';
+---
+
+<section class="section section--soft advantages" id="vorteile" aria-labelledby="vorteile-title">
+  <div class="container advantages__grid">
+    <div class="advantages__intro">
+      <span class="label" data-reveal>Warum deinkammerjaeger</span>
+      <h2 id="vorteile-title" data-reveal style="--i:1">Ihr Problem ist bei uns Chefsache</h2>
+      <p class="advantages__lead" data-reveal style="--i:2">
+        Kein Callcenter, keine wechselnden Techniker: Bei uns sprechen Sie direkt mit dem Kammerjäger, der auch zu Ihnen kommt.
+      </p>
+      <div class="btn-row" data-reveal style="--i:3">
+        <a class="btn" href={company.phoneHref}><Icon name="phone" /><span>Jetzt anrufen</span></a>
+        <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp</span></a>
+      </div>
+    </div>
+
+    <ol class="advantages__list">
+      {advantages.map((a, i) => (
+        <li class="advantage" data-reveal style={`--i:${i % 2}`}>
+          <span class="advantage__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{a.title}</h3>
+          <p>{a.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .advantages__grid {
+    display: grid;
+    gap: 3rem;
+  }
+  .advantages__lead {
+    margin: 1.25rem 0 2rem;
+    font-size: 1.125rem;
+    max-width: 30rem;
+  }
+  .advantages__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.5rem 2.5rem;
+  }
+  .advantage {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .advantage__num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 3rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--primary);
+    margin-bottom: 0.4rem;
+  }
+  .advantage p { color: var(--muted); }
+
+  @media (min-width: 640px) {
+    .advantages__list { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .advantages__grid { grid-template-columns: 5fr 7fr; gap: 5rem; }
+    .advantages__intro { position: sticky; top: calc(var(--header-h) + 40px); align-self: start; }
+    .advantages__list { gap: 3.25rem 3rem; }
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+/**
+ * Original-Logo (logo-web.jpg, freigestellt als PNG).
+ * "white" ersetzt die Anthrazit-Anteile durch Weiß – für dunkle Hintergründe.
+ */
+import { Image } from 'astro:assets';
+import logoColor from '../assets/images/logo.png';
+import logoWhite from '../assets/images/logo-white.png';
+
+interface Props {
+  variant?: 'color' | 'white';
+  class?: string;
+}
+const { variant = 'color', class: className = '' } = Astro.props;
+const src = variant === 'white' ? logoWhite : logoColor;
+---
+
+<Image
+  src={src}
+  alt="deinkammerjäger Schädlingsbekämpfung"
+  class={`logo logo--${variant} ${className}`}
+  widths={[120, 180, 270, 425]}
+  sizes="(max-width: 420px) 105px, 160px"
+  loading="eager"
+/>
+
+<style>
+  .logo {
+    display: block;
+    height: 74px;
+    width: auto;
+  }
+  .logo--white { height: 96px; }
+  @media (max-width: 420px) {
+    .logo { height: 62px; }
+  }
+</style>

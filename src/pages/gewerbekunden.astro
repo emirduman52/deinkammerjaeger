@@ -1,0 +1,271 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Contact from '../components/Contact.astro';
+import Icon from '../components/Icon.astro';
+import { business, company } from '../data/site';
+---
+
+<BaseLayout title={business.seoTitle} description={business.seoDescription}>
+  <section class="biz-hero on-dark" aria-labelledby="biz-title">
+    <svg class="biz-hero__arcs" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
+      <path d="M60 300a240 240 0 0 1 360-208" fill="none" stroke="var(--primary-light)" stroke-opacity="0.5" stroke-width="14" stroke-linecap="round" />
+      <path d="M540 300a240 240 0 0 1-120 208" fill="none" stroke="#C9CDD2" stroke-opacity="0.3" stroke-width="14" stroke-linecap="round" />
+    </svg>
+    <div class="container biz-hero__inner">
+      <span class="label" data-reveal>{business.label}</span>
+      <h1 id="biz-title" data-reveal style="--i:1">{business.title}</h1>
+      <p class="biz-hero__intro" data-reveal style="--i:2">{business.intro}</p>
+      <div class="btn-row" data-reveal style="--i:3">
+        <a class="btn btn--sos" href={company.phoneHref}><Icon name="phone" /><span>{company.phoneDisplay}</span></a>
+        <a class="btn btn--outline-light" href="#kontakt"><Icon name="send" /><span>Angebot anfragen</span></a>
+      </div>
+      <ul class="biz-hero__highlights" data-reveal style="--i:4">
+        {business.highlights.map((h) => <li><Icon name="check" size={18} strokeWidth={2.5} />{h}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section biz-benefits" aria-labelledby="biz-benefits-title">
+    <div class="container">
+      <header class="section-head section-head--split">
+        <div>
+          <span class="label" data-reveal>Was Sie von uns bekommen</span>
+          <h2 id="biz-benefits-title" data-reveal style="--i:1">Worauf es Betrieben wirklich ankommt</h2>
+        </div>
+        <p class="section-head__lead" data-reveal style="--i:2">
+          Im Gewerbe zählen Tempo, Verlässlichkeit und saubere Nachweise. Genau darauf ist unsere Arbeit ausgerichtet.
+        </p>
+      </header>
+      <ol class="biz-benefits__list">
+        {business.benefits.map((b, i) => (
+          <li class="biz-benefit" data-reveal style={`--i:${i % 3}`}>
+            <span class="biz-benefit__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{b.title}</h3>
+            <p>{b.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="biz-sectors-title">
+    <div class="container">
+      <header class="section-head">
+        <span class="label" data-reveal>Branchen</span>
+        <h2 id="biz-sectors-title" data-reveal style="--i:1">Für diese Betriebe sind wir im Einsatz</h2>
+      </header>
+      <ul class="biz-sectors">
+        {business.sectors.map((s, i) => (
+          <li class="card biz-sector" data-reveal style={`--i:${i % 3}`}>
+            <span class="icon-badge"><Icon name={s.icon} /></span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="biz-steps-title">
+    <div class="container">
+      <header class="section-head">
+        <span class="label" data-reveal>Zusammenarbeit</span>
+        <h2 id="biz-steps-title" data-reveal style="--i:1">So arbeiten wir mit Ihrem Betrieb</h2>
+      </header>
+      <ol class="biz-steps">
+        {business.steps.map((s, i) => (
+          <li class="biz-step" data-reveal style={`--i:${i}`}>
+            <span class="reticle biz-step__num" aria-hidden="true">{i + 1}</span>
+            <h3><span class="sr-only">Schritt {i + 1}: </span>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="biz-faq-title">
+    <div class="container biz-faq">
+      <header>
+        <span class="label" data-reveal>Häufige Fragen</span>
+        <h2 id="biz-faq-title" data-reveal style="--i:1">Was Gewerbekunden uns oft fragen</h2>
+        <p class="biz-faq__lead" data-reveal style="--i:2">
+          Ihre Frage ist nicht dabei? Rufen Sie an: <a href={company.phoneHref}>{company.phoneDisplay}</a>
+        </p>
+      </header>
+      <div class="biz-faq__list">
+        {business.faq.map((f, i) => (
+          <details class="biz-faq__item" data-reveal style={`--i:${i}`}>
+            <summary>{f.q}<Icon name="plus" size={20} /></summary>
+            <div class="biz-faq__answer"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Contact />
+</BaseLayout>
+
+<script>
+  // FAQ: weiches Auf- und Zuklappen der <details>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLDetailsElement>('.biz-faq__item').forEach((item) => {
+    const summary = item.querySelector('summary')!;
+    const answer = item.querySelector<HTMLElement>('.biz-faq__answer')!;
+    let anim: Animation | null = null;
+    summary.addEventListener('click', (e) => {
+      if (reduce) return;
+      e.preventDefault();
+      const opening = !item.open || item.classList.contains('is-closing');
+      const from = answer.offsetHeight;
+      anim?.cancel();
+      if (opening) {
+        item.classList.remove('is-closing');
+        item.open = true;
+      } else {
+        item.classList.add('is-closing');
+      }
+      const to = opening ? answer.scrollHeight : 0;
+      anim = answer.animate(
+        [{ height: `${opening && !from ? 0 : from}px`, opacity: opening ? 0 : 1 }, { height: `${to}px`, opacity: opening ? 1 : 0 }],
+        { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      );
+      anim.onfinish = () => {
+        anim = null;
+        if (!opening) { item.open = false; item.classList.remove('is-closing'); }
+      };
+    });
+  });
+</script>
+
+<style>
+  .biz-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--dark);
+    color: #fff;
+    padding-block: clamp(72px, 10vw, 128px);
+  }
+  .biz-hero__arcs {
+    position: absolute;
+    z-index: -1;
+    width: min(90vw, 620px);
+    right: -14%;
+    top: -20%;
+    pointer-events: none;
+  }
+  .biz-hero h1 {
+    margin-top: 1rem;
+    max-width: 17ch;
+    color: #fff;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .biz-hero__intro {
+    margin: 1.5rem 0 2.25rem;
+    max-width: 40rem;
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .biz-hero__highlights {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.975rem;
+  }
+  .biz-hero__highlights li { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .biz-hero__highlights :global(.icon) { color: var(--primary-tint); }
+
+  .biz-benefits__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.5rem;
+  }
+  .biz-benefit { display: grid; gap: 0.6rem; align-content: start; padding-top: 1.25rem; border-top: 2px solid var(--line); }
+  .biz-benefit__num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+  }
+  .biz-benefit p { color: var(--muted); }
+  @media (min-width: 640px) { .biz-benefits__list { grid-template-columns: repeat(2, 1fr); gap: 2.75rem 2.5rem; } }
+  @media (min-width: 1024px) { .biz-benefits__list { grid-template-columns: repeat(3, 1fr); } }
+
+  .biz-sectors {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .biz-sector { display: flex; gap: 1.25rem; align-items: flex-start; padding: 1.5rem; }
+  .biz-sector .icon-badge { margin-top: 0.25rem; }
+  .biz-sector p { margin-top: 0.3rem; color: var(--muted); font-size: 1rem; }
+  @media (min-width: 640px) { .biz-sectors { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+  @media (min-width: 1024px) { .biz-sectors { grid-template-columns: repeat(3, 1fr); } }
+
+  .biz-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.5rem;
+  }
+  .biz-step { display: grid; gap: 0.6rem; align-content: start; }
+  .biz-step__num {
+    width: 56px;
+    height: 56px;
+    margin: 6px 0 0.9rem 6px;
+    --reticle-ring: var(--primary);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.375rem;
+    color: var(--primary-dark);
+  }
+  .biz-step p { color: var(--muted); }
+  @media (min-width: 640px) { .biz-steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .biz-steps { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
+
+  .biz-faq { display: grid; gap: 2.5rem; }
+  .biz-faq h2 { hyphens: manual; }
+  .biz-faq__lead { margin-top: 1.25rem; font-size: 1.0625rem; }
+  .biz-faq__lead a { font-weight: 700; white-space: nowrap; }
+  .biz-faq__list { display: grid; gap: 12px; }
+  .biz-faq__item { background: #fff; border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+  .biz-faq__item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+  }
+  .biz-faq__item summary::-webkit-details-marker { display: none; }
+  .biz-faq__item summary :global(.icon) { flex: none; color: var(--primary); transition: transform 0.3s var(--ease); }
+  .biz-faq__item[open]:not(.is-closing) summary :global(.icon) { transform: rotate(45deg); }
+  .biz-faq__answer { overflow: hidden; }
+  .biz-faq__item p { padding: 0 1.5rem 1.4rem; color: var(--muted); }
+  .biz-faq__item summary { transition: color 0.2s; }
+  .biz-faq__item summary:hover { color: var(--primary-dark); }
+  @media (min-width: 1024px) {
+    .biz-faq { grid-template-columns: 5fr 7fr; gap: 5rem; align-items: start; }
+  }
+</style>

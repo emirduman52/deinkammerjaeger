@@ -1,0 +1,101 @@
+---
+/* [TEXT VOM KUNDEN FREIGEBEN] – Texte und Zitat in src/data/site.ts (about) vom Inhaber bestätigen lassen. */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { about, company } from '../data/site';
+---
+
+<section class="section about" id="ueber-uns" aria-labelledby="ueber-uns-title">
+  <div class="container about__grid">
+    <figure class="about__media" data-reveal>
+      <svg class="about__arcs" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+        <path d="M30 200A170 170 0 0 1 285 53" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" />
+        <path d="M370 200a170 170 0 0 1-85 147" fill="none" stroke="#B9BEC4" stroke-width="12" stroke-linecap="round" />
+      </svg>
+      <Image src={about.image} alt={about.imageAlt} widths={[480, 720, 1000]} sizes="(min-width: 1024px) 440px, 90vw" format="webp" loading="lazy" class="about__img" />
+      <figcaption class="about__caption">
+        <strong>{company.owner}</strong>
+        <span>Inhaber · {company.city}</span>
+      </figcaption>
+    </figure>
+
+    <div class="about__copy">
+      <span class="label" data-reveal>{about.label}</span>
+      <h2 id="ueber-uns-title" data-reveal style="--i:1">{about.title}</h2>
+      {about.paragraphs.map((p, i) => <p class="about__p" data-reveal style={`--i:${i + 2}`}>{p}</p>)}
+
+      <blockquote class="about__quote" data-reveal style="--i:4">
+        <p>„{about.quote}“</p>
+        <footer><strong>{about.quoteName}</strong>, {about.quoteRole}</footer>
+      </blockquote>
+
+      <div class="btn-row" data-reveal style="--i:5">
+        <a class="btn" href={company.phoneHref}><Icon name="phone" /><span>Direkt mit mir sprechen</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: 3.5rem;
+    align-items: center;
+  }
+  .about__media {
+    position: relative;
+    margin: 0 auto;
+    width: min(100%, 440px);
+    padding: 7%;
+  }
+  .about__arcs {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .about__img {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+  }
+  .about__caption {
+    position: absolute;
+    left: 0;
+    bottom: 10%;
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.9rem 1.2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    font-size: 0.9375rem;
+  }
+  .about__caption strong { font-family: var(--font-display); font-size: 1.0625rem; }
+  .about__caption span { color: var(--muted); }
+
+  .about__copy h2 { margin-bottom: 1.5rem; }
+  .about__p { max-width: 38rem; margin-bottom: 1rem; }
+  .about__quote {
+    margin: 2rem 0;
+    padding: 1.5rem 0 1.5rem 1.5rem;
+    border-left: 5px solid var(--primary);
+    max-width: 38rem;
+  }
+  .about__quote p {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.1875rem, 1rem + 0.6vw, 1.4375rem);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+  .about__quote footer { margin-top: 0.9rem; color: var(--muted); font-size: 0.975rem; }
+  .about__quote footer strong { color: var(--dark); }
+
+  @media (min-width: 1024px) {
+    .about__grid { grid-template-columns: 5fr 7fr; gap: 5rem; }
+    .about__media { width: 100%; }
+  }
+</style>

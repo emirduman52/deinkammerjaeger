@@ -1,0 +1,136 @@
+---
+import { withBase } from '../lib/url';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { company, footer, locations, openingHours } from '../data/site';
+import { withPlaceholders, isPlaceholder } from '../lib/format';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer on-dark">
+  <div class="container footer__top">
+    <div class="footer__brand">
+      <Logo variant="white" />
+      <p>{footer.description}</p>
+      <a class="footer__insta" href={company.instagram} target="_blank" rel="noopener" aria-label="deinkammerjaeger auf Instagram (öffnet neues Fenster)">
+        <Icon name="instagram" size={22} />
+      </a>
+    </div>
+
+    <div class="footer__col">
+      <h2 class="footer__title">Kontakt</h2>
+      <address>
+        {company.name}<br />
+        Inh. {company.owner}<br />
+        {company.street}<br />
+        {company.zip} {company.city}
+      </address>
+      <p><a href={company.phoneHref} class="footer__phone">{company.phoneDisplay}</a></p>
+      <p>
+        {isPlaceholder(company.email)
+          ? <span set:html={withPlaceholders(company.email)} />
+          : <a href={`mailto:${company.email}`}>{company.email}</a>}
+      </p>
+      <p class="footer__hours" set:html={withPlaceholders(openingHours.map((h) => `${h.days}: ${h.time}`).join(' · '))} />
+    </div>
+
+    <nav class="footer__col" aria-label="Footer-Navigation">
+      <h2 class="footer__title">Seiten</h2>
+      <ul>
+        {footer.links.map((l) => <li><a href={withBase(l.href)}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="footer__col">
+      <h2 class="footer__title">Einsatzgebiet</h2>
+      <p class="footer__places">{locations.map((l) => l.name).join(', ')} und Umgebung</p>
+    </div>
+  </div>
+
+  <div class="container footer__legal">
+    <p>© {year} {company.name} · Schädlingsbekämpfung in Willich und im Rheinland</p>
+    <p><a href={withBase('/impressum')}>Impressum</a> · <a href={withBase('/datenschutz')}>Datenschutz</a> · Designed by <a href="https://amano.agency" target="_blank" rel="noopener">Amano Agency</a></p>
+  </div>
+
+  <div class="footer__wordmark" aria-hidden="true" data-word="deinkammerjäger"></div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark-deep);
+    color: rgba(255, 255, 255, 0.82);
+    padding-top: clamp(64px, 8vw, 104px);
+    font-size: 1rem;
+  }
+  .footer a { color: #fff; text-decoration-color: rgba(255, 255, 255, 0.35); }
+  .footer a:hover { color: var(--primary-tint); }
+  .footer__top {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .footer__brand p { margin: 1.25rem 0; max-width: 24rem; }
+  .footer__insta {
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    transition: background-color 0.2s;
+  }
+  .footer__insta:hover { background: var(--primary); color: #fff; }
+  .footer__title {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  .footer address { font-style: normal; margin-bottom: 0.9rem; }
+  .footer__col p + p { margin-top: 0.4rem; }
+  .footer__phone { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; text-decoration: none; }
+  .footer__hours { font-size: 0.9375rem; color: rgba(255, 255, 255, 0.72); }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .footer ul a { text-decoration: none; }
+  .footer ul a:hover { text-decoration: underline; }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: clamp(48px, 6vw, 80px);
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .footer__wordmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 11.2vw;
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.09);
+    transform: translateY(16%);
+    user-select: none;
+  }
+  .footer__wordmark::before { content: attr(data-word); }
+
+  @media (min-width: 640px) {
+    .footer__top { grid-template-columns: 1fr 1fr; }
+  }
+  @media (min-width: 1024px) {
+    .footer__top { grid-template-columns: 1.4fr 1fr 0.8fr 1fr; gap: 3rem; }
+  }
+  @media (max-width: 767px) {
+    .footer { padding-bottom: 88px; }
+    .footer__wordmark { transform: none; margin-top: 1rem; }
+  }
+</style>

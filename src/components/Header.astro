@@ -1,0 +1,204 @@
+---
+import { withBase } from '../lib/url';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { navigation, company } from '../data/site';
+
+interface Props { home?: boolean }
+const { home = false } = Astro.props;
+const href = (h: string) => withBase(h.startsWith('#') && !home ? `/${h}` : h);
+// Build-Format 'file' liefert /seite.html – für den Vergleich normalisieren
+const path = Astro.url.pathname.replace(/(\.html|\/)$/, '');
+const current = (h: string) => (withBase(h) === path ? 'page' : undefined);
+---
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a href={home ? '#top' : withBase('/')} class="header__logo" aria-label={`deinkammerjäger ${company.logoSuffix} – zur Startseite`}>
+      <Logo />
+    </a>
+
+    <nav class="header__nav" aria-label="Hauptmenü">
+      <ul>
+        {navigation.map((item) => (
+          <li><a href={href(item.href)} data-nav-link aria-current={current(item.href)}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a class="header__phone" href={company.phoneHref}>
+        <Icon name="phone" size={18} />
+        <span>{company.phoneDisplay}</span>
+      </a>
+      <a class="header__icon-link header__insta" href={company.instagram} target="_blank" rel="noopener" aria-label="deinkammerjaeger auf Instagram (öffnet neues Fenster)">
+        <Icon name="instagram" size={22} />
+      </a>
+      <a class="btn btn--sos header__sos" href={company.phoneHref}>
+        <Icon name="phone" />
+        <span>Schädlings-Soforthilfe</span>
+      </a>
+      <a class="header__icon-link header__call-mobile" href={company.phoneHref} aria-label={`Jetzt anrufen: ${company.phoneDisplay}`}>
+        <Icon name="phone" size={22} />
+      </a>
+      <button class="header__burger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menü öffnen" data-burger>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+    <nav class="container" aria-label="Mobiles Menü">
+      <ul>
+        {navigation.map((item) => (
+          <li><a href={href(item.href)} data-nav-link data-menu-close aria-current={current(item.href)}>{item.label}</a></li>
+        ))}
+      </ul>
+      <div class="mobile-menu__actions">
+        <a class="btn btn--sos" href={company.phoneHref}><Icon name="phone" /><span>Schädlings-Soforthilfe</span></a>
+        <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp schreiben</span></a>
+        <a class="mobile-menu__insta" href={company.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={22} /><span>{company.instagramHandle}</span></a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.98);
+    transition: box-shadow 0.3s var(--ease);
+  }
+  .header.is-scrolled { box-shadow: 0 6px 24px rgba(30, 40, 50, 0.1); }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: var(--header-h);
+    transition: height 0.3s var(--ease);
+  }
+  .header.is-scrolled .header__inner { height: 66px; }
+  .header__logo :global(.logo) { transition: height 0.3s var(--ease); }
+  .header.is-scrolled .header__logo :global(.logo) { height: 60px; }
+  .header__logo { text-decoration: none; flex: none; }
+
+  .header__nav { display: none; margin-left: auto; }
+  .header__nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  .header__nav a {
+    position: relative;
+    display: block;
+    padding: 0.6rem 0.7rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.975rem;
+    white-space: nowrap;
+    color: var(--dark);
+    text-decoration: none;
+  }
+  .header__nav a::after {
+    content: '';
+    position: absolute;
+    left: 0.8rem; right: 0.8rem; bottom: 0.25rem;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transition: transform 0.25s var(--ease);
+  }
+  .header__nav a:hover { color: var(--primary-dark); }
+  .header__nav a:hover::after, .header__nav a.is-active::after, .header__nav a[aria-current="page"]::after { transform: scaleX(1); }
+  .header__nav a.is-active, .header__nav a[aria-current="page"] { color: var(--primary-dark); }
+
+  .header__actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+  .header__phone {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--dark);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0.5rem;
+  }
+  .header__phone .icon { color: var(--primary); }
+  .header__phone:hover { color: var(--primary-dark); }
+  .header__icon-link {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--primary);
+    transition: background-color 0.2s var(--ease);
+  }
+  .header__icon-link:hover { background: var(--primary-wash); color: var(--primary-dark); }
+  .header__call-mobile { background: var(--primary); color: #fff; }
+  .header__call-mobile:hover { background: var(--primary-dark); color: #fff; }
+  .header__insta { display: none; }
+  .header__sos { display: none; min-height: 48px; padding: 0.6rem 1.15rem; font-size: 1.0625rem; white-space: nowrap; }
+
+  .header__burger {
+    display: grid;
+    align-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    cursor: pointer;
+  }
+  .header__burger span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--dark);
+    transition: transform 0.3s var(--ease), opacity 0.2s;
+  }
+  .header__burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .header__burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+  .header__burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    border-top: 1px solid var(--line);
+    background: #fff;
+    max-height: calc(100svh - 66px);
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(30, 40, 50, 0.12);
+  }
+  .mobile-menu ul { list-style: none; margin: 0; padding: 0.75rem 0; }
+  .mobile-menu li a {
+    display: block;
+    padding: 0.9rem 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: var(--dark);
+    text-decoration: none;
+  }
+  .mobile-menu li a.is-active, .mobile-menu li a[aria-current="page"] { color: var(--primary-dark); }
+  .mobile-menu__actions { display: grid; gap: 12px; padding-bottom: 1.5rem; }
+  .mobile-menu__insta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    font-weight: 600;
+  }
+
+  @media (min-width: 1024px) {
+    .header__nav { display: block; }
+    .header__actions { margin-left: 0.5rem; }
+    .header__burger, .header__call-mobile, .mobile-menu { display: none !important; }
+    .header__insta { display: grid; }
+    .header__sos { display: inline-flex; }
+  }
+  /* Unter 1260px übernimmt der Soforthilfe-Button den Anruf, die Nummer selbst passt dann nicht mehr in die Zeile */
+  @media (min-width: 1260px) {
+    .header__phone { display: inline-flex; }
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { company } from '../data/site';
+---
+
+<LegalLayout title="Datenschutzerklärung | deinkammerjaeger" heading="Datenschutz" description="Datenschutzerklärung von deinkammerjaeger – Schädlingsbekämpfung in Willich und im Rheinland.">
+  <p class="legal__note"><mark class="placeholder">[ANGABEN VOM KUNDEN / RECHTSTEXT-GENERATOR]</mark> – Dieser Text ist ein Platzhalter und muss vor Veröffentlichung durch eine geprüfte Datenschutzerklärung ersetzt werden.</p>
+
+  <h2>1. Verantwortlicher</h2>
+  <p>
+    {company.name}, Inhaber {company.owner}<br />
+    {company.street}, {company.zip} {company.city}<br />
+    Telefon: <a href={company.phoneHref}>{company.phoneDisplay}</a> · E-Mail: <mark class="placeholder">{company.email}</mark>
+  </p>
+
+  <h2>2. Hosting und Server-Logfiles</h2>
+  <p><mark class="placeholder">[HOSTING-ANBIETER UND RECHTSTEXT-GENERATOR]</mark></p>
+
+  <h2>3. Kontaktformular</h2>
+  <p>
+    Wenn Sie uns über das Kontaktformular eine Anfrage senden, verarbeiten wir die von Ihnen angegebenen Daten
+    (Name, Telefon, ggf. E-Mail, Ort, Schädlingsart, Nachricht) zur Bearbeitung Ihrer Anfrage.
+    <mark class="placeholder">[RECHTSGRUNDLAGE, SPEICHERDAUER, EINGESETZTER DIENST (z. B. n8n) – RECHTSTEXT-GENERATOR]</mark>
+  </p>
+
+  <h2>4. Kontakt per Telefon und WhatsApp</h2>
+  <p><mark class="placeholder">[HINWEISE ZU WHATSAPP (Meta Platforms) – RECHTSTEXT-GENERATOR]</mark></p>
+
+  <h2>5. Externe Links (Instagram, Google Maps)</h2>
+  <p>
+    Diese Website bindet keine Inhalte von Instagram oder Google Maps ein. Es handelt sich um einfache Links;
+    Daten werden erst übertragen, wenn Sie den Link anklicken und die jeweilige Seite öffnen.
+  </p>
+
+  <h2>6. Schriftarten und Cookies</h2>
+  <p>
+    Alle Schriftarten werden lokal von unserem Server geladen. Es werden keine Tracking- oder Analyse-Dienste
+    eingesetzt und keine Cookies zu Marketingzwecken gesetzt.
+  </p>
+
+  <h2>7. Ihre Rechte</h2>
+  <p><mark class="placeholder">[BETROFFENENRECHTE, BESCHWERDERECHT – RECHTSTEXT-GENERATOR]</mark></p>
+</LegalLayout>

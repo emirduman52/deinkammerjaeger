@@ -1,0 +1,66 @@
+---
+/**
+ * Kennzeichnung KI-generierter Bilder (Transparenzpflicht, EU AI Act Art. 50).
+ * Das Elternelement muss positioniert sein (position: relative/absolute).
+ */
+interface Props {
+  /** Ecke, in der das Badge sitzt */
+  position?: 'top-right' | 'bottom-right' | 'bottom-left';
+  class?: string;
+}
+const { position = 'top-right', class: className = '' } = Astro.props;
+---
+
+<span class={`ai-badge ai-badge--${position} ${className}`} tabindex="0">
+  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="6.5" r="1.6" fill="currentColor" />
+    <path d="M12 10.5v8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+  </svg>
+  <span class="ai-badge__tip" role="note">KI-generiertes Bild</span>
+</span>
+
+<style>
+  .ai-badge {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(28, 29, 31, 0.62);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
+    cursor: help;
+    outline: none;
+  }
+  .ai-badge--top-right { top: 12px; right: 12px; }
+  .ai-badge--bottom-right { bottom: 12px; right: 12px; }
+  .ai-badge--bottom-left { bottom: 12px; left: 12px; }
+
+  .ai-badge__tip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 8px);
+    transform: translate(4px, -50%);
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(28, 29, 31, 0.9);
+    color: #fff;
+    font-family: var(--font-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s var(--ease);
+  }
+  .ai-badge--bottom-left .ai-badge__tip { right: auto; left: calc(100% + 8px); transform: translate(-4px, -50%); }
+  .ai-badge:hover .ai-badge__tip,
+  .ai-badge:focus-visible .ai-badge__tip,
+  .ai-badge:focus .ai-badge__tip { opacity: 1; transform: translate(0, -50%); }
+  .ai-badge:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary); }
+</style>

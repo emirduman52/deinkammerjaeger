@@ -1,0 +1,402 @@
+---
+import { withBase } from '../lib/url';
+import Icon from './Icon.astro';
+import { company, openingHours, services, otherPestOption, FORM_ENDPOINT } from '../data/site';
+import { withPlaceholders, isPlaceholder } from '../lib/format';
+
+const emailIsPlaceholder = isPlaceholder(company.email);
+---
+
+<section class="section contact" id="kontakt" aria-labelledby="kontakt-title">
+  <div class="container">
+    <header class="section-head section-head--split">
+      <div>
+        <span class="label" data-reveal>Kontakt</span>
+        <h2 id="kontakt-title" data-reveal style="--i:1">Schildern Sie uns Ihr Problem</h2>
+      </div>
+      <p class="section-head__lead" data-reveal style="--i:2">
+        Am schnellsten geht es per Telefon oder WhatsApp. Lieber schriftlich? Dann nutzen Sie das Formular – wir melden uns zeitnah zurück.
+      </p>
+    </header>
+
+    <div class="contact__grid">
+      <form
+        class="form"
+        data-contact-form
+        data-endpoint={FORM_ENDPOINT}
+        data-email={emailIsPlaceholder ? '' : company.email}
+        data-phone={company.phoneDisplay}
+        data-phone-href={company.phoneHref}
+        data-whatsapp={company.whatsappHref}
+        novalidate
+        data-reveal
+      >
+        <div class="form__row">
+          <div class="field">
+            <label for="f-name">Name <span aria-hidden="true">*</span></label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required />
+            <p class="field__error" id="f-name-err" hidden>Bitte geben Sie Ihren Namen an.</p>
+          </div>
+          <div class="field">
+            <label for="f-phone">Telefon <span aria-hidden="true">*</span></label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+            <p class="field__error" id="f-phone-err" hidden>Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen.</p>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="field">
+            <label for="f-email">E-Mail</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" />
+            <p class="field__error" id="f-email-err" hidden>Bitte prüfen Sie die E-Mail-Adresse.</p>
+          </div>
+          <div class="field">
+            <label for="f-city">Ort</label>
+            <input id="f-city" name="city" type="text" autocomplete="address-level2" placeholder="z. B. Düsseldorf" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-pest">Schädlingsart <span aria-hidden="true">*</span></label>
+          <div class="select">
+            <select id="f-pest" name="pest" required data-pest-select>
+              <option value="">Bitte auswählen</option>
+              {services.map((s) => <option value={s.id}>{s.title}</option>)}
+              <option value="andere">{otherPestOption}</option>
+            </select>
+            <Icon name="chevron-right" size={20} class="select__icon" />
+          </div>
+          <p class="field__error" id="f-pest-err" hidden>Bitte wählen Sie eine Schädlingsart aus.</p>
+        </div>
+        <div class="field">
+          <label for="f-message">Nachricht</label>
+          <textarea id="f-message" name="message" rows="5" placeholder="Was haben Sie bemerkt, wo und seit wann?"></textarea>
+        </div>
+
+        <!-- Honeypot: für Menschen unsichtbar, Bots füllen es aus -->
+        <div class="form__hp" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="field field--check">
+          <input id="f-privacy" name="privacy" type="checkbox" required />
+          <label for="f-privacy">
+            Ich habe die <a href={withBase('/datenschutz')} target="_blank">Datenschutzerklärung</a> gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung der Anfrage einverstanden. <span aria-hidden="true">*</span>
+          </label>
+          <p class="field__error" id="f-privacy-err" hidden>Bitte stimmen Sie der Datenschutzerklärung zu.</p>
+        </div>
+
+        <div class="form__submit">
+          <button class="btn" type="submit" data-submit>
+            <span class="btn__label"><Icon name="send" /><span>Anfrage senden</span></span>
+            <span class="btn__loading"><Icon name="loader-circle" class="spin" /><span>Wird gesendet …</span></span>
+          </button>
+          <p class="form__hint">* Pflichtfelder</p>
+        </div>
+
+        <div class="form__status" role="status" aria-live="polite" data-status hidden></div>
+      </form>
+
+      <aside class="contact-card" aria-label="Kontaktdaten" data-reveal style="--i:2">
+        <h3 class="contact-card__title">{company.name}</h3>
+        <p class="contact-card__owner">Inhaber: {company.owner}</p>
+
+        <ul class="contact-card__list">
+          <li>
+            <Icon name="map-pin" />
+            <span>{company.street}<br />{company.zip} {company.city}</span>
+          </li>
+          <li>
+            <Icon name="phone" />
+            <a href={company.phoneHref} class="contact-card__phone">{company.phoneDisplay}</a>
+          </li>
+          <li>
+            <Icon name="mail" />
+            {emailIsPlaceholder
+              ? <span set:html={withPlaceholders(company.email)} />
+              : <a href={`mailto:${company.email}`}>{company.email}</a>}
+          </li>
+          <li>
+            <Icon name="instagram" />
+            <a href={company.instagram} target="_blank" rel="noopener">{company.instagramHandle}</a>
+          </li>
+          <li>
+            <Icon name="clock" />
+            <dl class="hours">
+              {openingHours.map((h) => (
+                <div><dt>{h.days}</dt><dd set:html={withPlaceholders(h.time)} /></div>
+              ))}
+            </dl>
+          </li>
+        </ul>
+
+        <div class="contact-card__actions">
+          <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp schreiben</span></a>
+          <a class="btn btn--outline" href={company.mapsHref} target="_blank" rel="noopener"><Icon name="navigation" /><span>Route planen</span></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .contact__grid { grid-template-columns: 7fr 5fr; gap: 3rem; }
+  }
+
+  .form {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border-radius: var(--radius-card);
+    background: var(--bg-soft);
+  }
+  .form__row { display: grid; gap: 1.25rem; }
+  @media (min-width: 640px) { .form__row { grid-template-columns: 1fr 1fr; } }
+
+  .field { display: grid; gap: 0.4rem; }
+  .field label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+  .field input:not([type='checkbox']), .field select, .field textarea {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: var(--radius-btn);
+    background: #fff;
+    color: var(--dark);
+    font: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field textarea { resize: vertical; min-height: 140px; }
+  .field input::placeholder, .field textarea::placeholder { color: #80858B; }
+  .field input:hover, .field select:hover, .field textarea:hover { border-color: #B8C7D6; }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(11, 127, 203, 0.18);
+  }
+  .field [aria-invalid='true'] { border-color: #B3261E !important; }
+  .field__error { color: #B3261E; font-size: 0.9rem; font-weight: 500; }
+
+  .select { position: relative; }
+  .select select { appearance: none; padding-right: 3rem; cursor: pointer; }
+  .select :global(.select__icon) {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    color: var(--primary);
+    pointer-events: none;
+  }
+  .select.is-preselected select { animation: flash 1.2s var(--ease); }
+  @keyframes flash {
+    0%, 40% { border-color: var(--primary); box-shadow: 0 0 0 6px rgba(11, 127, 203, 0.25); }
+    100% { box-shadow: 0 0 0 0 rgba(11, 127, 203, 0); }
+  }
+
+  .field--check {
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 0.4rem 0.75rem;
+  }
+  .field--check input {
+    width: 24px;
+    height: 24px;
+    margin: 0.1rem 0 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+  .field--check label { font-family: var(--font-text); font-weight: 400; font-size: 0.975rem; line-height: 1.5; }
+  .field--check .field__error { grid-column: 2; }
+
+  .form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .form__submit { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+  .form__hint { color: var(--muted); font-size: 0.9375rem; }
+  .btn__label, .btn__loading { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .btn__loading { display: none; }
+  .form.is-loading .btn__label { display: none; }
+  .form.is-loading .btn__loading { display: inline-flex; }
+  .form.is-loading [data-submit] { pointer-events: none; opacity: 0.85; }
+  :global(.spin) { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .form__status {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-btn);
+    font-weight: 500;
+  }
+  .form__status[hidden] { display: none; }
+  .form__status.is-success { background: #E3F4EA; color: #145C32; }
+  .form__status.is-error { background: #FCE8E6; color: #8C1D18; }
+  .form__status :global(a) { color: inherit; font-weight: 700; }
+
+  .contact-card {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border-radius: var(--radius-card);
+    background: var(--dark);
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .contact-card__title {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+  .contact-card__owner { margin-top: -0.75rem; color: rgba(255, 255, 255, 0.72); }
+  .contact-card__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .contact-card__list li {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+  .contact-card__list :global(.icon) { color: var(--primary-light); margin-top: 0.15rem; }
+  .contact-card a { color: #fff; text-decoration-color: rgba(255, 255, 255, 0.4); }
+  .contact-card a:hover { color: var(--primary-tint); }
+  .contact-card__phone {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    line-height: 1.1;
+  }
+  .hours { margin: 0; display: grid; gap: 0.35rem; }
+  .hours div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 1rem; }
+  .hours dt { color: rgba(255, 255, 255, 0.75); }
+  .hours dd { margin: 0; font-weight: 600; }
+  .contact-card__actions { display: grid; gap: 12px; margin-top: 0.5rem; }
+  .contact-card .btn--outline { --btn-fg: #fff; border-color: rgba(255, 255, 255, 0.8); }
+  .contact-card .btn--outline:hover { --btn-bg-hover: #fff; --btn-fg: var(--dark); border-color: #fff; color: var(--dark); }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const email = (form.dataset.email || '').trim();
+    const pestSelect = form.querySelector<HTMLSelectElement>('[data-pest-select]')!;
+    const phoneLink = `<a href="${form.dataset.phoneHref}">${form.dataset.phone}</a>`;
+    const waLink = `<a href="${form.dataset.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>`;
+
+    const fields: { el: HTMLInputElement | HTMLSelectElement; check: () => boolean }[] = [
+      { el: form.querySelector('#f-name')!, check: () => (form.querySelector<HTMLInputElement>('#f-name')!.value.trim().length > 1) },
+      { el: form.querySelector('#f-phone')!, check: () => /[0-9]{5,}/.test(form.querySelector<HTMLInputElement>('#f-phone')!.value.replace(/\D/g, '')) },
+      { el: form.querySelector('#f-email')!, check: () => { const v = form.querySelector<HTMLInputElement>('#f-email')!; return !v.value || v.checkValidity(); } },
+      { el: pestSelect, check: () => pestSelect.value !== '' },
+      { el: form.querySelector('#f-privacy')!, check: () => form.querySelector<HTMLInputElement>('#f-privacy')!.checked },
+    ];
+
+    const setError = (el: HTMLElement, invalid: boolean) => {
+      const err = document.getElementById(`${el.id}-err`);
+      el.setAttribute('aria-invalid', String(invalid));
+      if (err) {
+        err.hidden = !invalid;
+        if (invalid) el.setAttribute('aria-describedby', err.id);
+        else el.removeAttribute('aria-describedby');
+      }
+    };
+
+    fields.forEach(({ el, check }) => {
+      el.addEventListener(el instanceof HTMLSelectElement || el.type === 'checkbox' ? 'change' : 'blur', () => {
+        if (el.getAttribute('aria-invalid') !== null) setError(el, !check());
+      });
+    });
+
+    const showStatus = (type: 'success' | 'error', html: string) => {
+      status.className = `form__status is-${type}`;
+      status.innerHTML = html;
+      status.hidden = false;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.hidden = true;
+      const endpoint = (form.dataset.endpoint || '').trim();
+
+      let firstInvalid: HTMLElement | null = null;
+      fields.forEach(({ el, check }) => {
+        const ok = check();
+        setError(el, !ok);
+        if (!ok && !firstInvalid) firstInvalid = el;
+      });
+      if (firstInvalid) { (firstInvalid as HTMLElement).focus(); return; }
+
+      const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+      // Honeypot gefüllt → still „erfolgreich“ beenden
+      if (data.website) { form.reset(); showStatus('success', 'Vielen Dank! Ihre Anfrage ist bei uns eingegangen.'); return; }
+      delete data.website;
+
+      const pestLabel = pestSelect.options[pestSelect.selectedIndex]?.text ?? data.pest;
+      const payload = {
+        name: data.name,
+        phone: data.phone,
+        email: data.email || '',
+        city: data.city || '',
+        pest: pestLabel,
+        message: data.message || '',
+        privacyAccepted: true,
+        source: window.location.href,
+        sentAt: new Date().toISOString(),
+      };
+
+      // Fallback ohne Endpoint: E-Mail-Programm öffnen
+      if (!endpoint) {
+        if (!email) {
+          showStatus('error', `Das Formular ist noch nicht freigeschaltet. Bitte rufen Sie uns an: ${phoneLink} oder schreiben Sie per ${waLink}.`);
+          return;
+        }
+        const body = [
+          `Name: ${payload.name}`,
+          `Telefon: ${payload.phone}`,
+          `E-Mail: ${payload.email}`,
+          `Ort: ${payload.city}`,
+          `Schädlingsart: ${payload.pest}`,
+          '',
+          payload.message,
+        ].join('\n');
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Anfrage: ${payload.pest} – ${payload.city || 'ohne Ort'}`)}&body=${encodeURIComponent(body)}`;
+        showStatus('success', 'Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die vorbereitete Nachricht dort ab.');
+        return;
+      }
+
+      form.classList.add('is-loading');
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        fields.forEach(({ el }) => el.removeAttribute('aria-invalid'));
+        showStatus('success', '<strong>Vielen Dank!</strong> Ihre Anfrage ist bei uns eingegangen. Wir melden uns so schnell wie möglich bei Ihnen.');
+      } catch {
+        showStatus('error', `Leider konnte Ihre Anfrage nicht gesendet werden. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an: ${phoneLink}.`);
+      } finally {
+        form.classList.remove('is-loading');
+      }
+    });
+  }
+</script>

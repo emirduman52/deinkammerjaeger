@@ -1,0 +1,108 @@
+---
+import Icon from './Icon.astro';
+import { steps, company } from '../data/site';
+---
+
+<section class="section section--soft process" id="ablauf" aria-labelledby="ablauf-title">
+  <div class="container">
+    <header class="section-head section-head--split">
+      <div>
+        <span class="label" data-reveal>Ablauf</span>
+        <h2 id="ablauf-title" data-reveal style="--i:1">In vier Schritten schädlingsfrei</h2>
+      </div>
+      <p class="section-head__lead" data-reveal style="--i:2">
+        Sie melden sich, wir kümmern uns um den Rest – klar, nachvollziehbar und mit Kontrolle am Ende.
+      </p>
+    </header>
+
+    <ol class="timeline">
+      {steps.map((s, i) => (
+        <li class="step" data-reveal style={`--i:${i}`}>
+          <span class="step__marker reticle" aria-hidden="true">{i + 1}</span>
+          <div class="step__body">
+            <h3><span class="sr-only">Schritt {i + 1}: </span>{s.title}</h3>
+            <p>{s.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="process__cta" data-reveal>
+      <p><strong>Schritt 1 dauert eine Minute.</strong> Rufen Sie an oder schicken Sie uns ein Foto per WhatsApp.</p>
+      <div class="btn-row">
+        <a class="btn" href={company.phoneHref}><Icon name="phone" /><span>Jetzt anrufen</span></a>
+        <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp schreiben</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    --marker: 64px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.25rem;
+    position: relative;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--marker) 1fr;
+    gap: 1.25rem;
+  }
+  /* Verbindungslinie (mobil vertikal) */
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--marker) / 2 - 2px);
+    top: var(--marker);
+    bottom: -2.25rem;
+    width: 4px;
+    border-radius: 2px;
+    background: #CFE3F3;
+  }
+  .step__marker {
+    width: var(--marker);
+    height: var(--marker);
+    background: var(--bg-soft);
+    box-shadow: 0 0 0 10px var(--bg-soft);
+    --reticle-ring: var(--primary);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.625rem;
+    line-height: 1;
+    color: var(--primary-dark);
+    font-variant-numeric: tabular-nums;
+  }
+  .step:hover .step__marker::before { transform: rotate(45deg); }
+  .step__body { padding-top: 0.6rem; }
+  .step__body p { margin-top: 0.5rem; color: var(--muted); }
+
+  .process__cta {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(48px, 6vw, 72px);
+    padding: 1.75rem;
+    border-radius: var(--radius-card);
+    background: #fff;
+  }
+  .process__cta p { font-size: 1.125rem; max-width: 34rem; }
+
+  @media (min-width: 900px) {
+    .timeline { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+    .step { grid-template-columns: 1fr; gap: 1.5rem; }
+    .step:not(:last-child)::before {
+      left: var(--marker);
+      right: -2rem;
+      top: calc(var(--marker) / 2 - 2px);
+      bottom: auto;
+      width: auto;
+      height: 4px;
+    }
+    .step__body { padding-top: 0; padding-right: 0.5rem; }
+    .process__cta { grid-template-columns: 1fr auto; align-items: center; padding: 2rem 2.25rem; }
+  }
+</style>

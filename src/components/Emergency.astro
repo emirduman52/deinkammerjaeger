@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import AiBadge from './AiBadge.astro';
+import { emergency, company } from '../data/site';
+---
+
+<section class="emergency on-dark" id="notfall" aria-labelledby="notfall-title">
+  <div class="emergency__media">
+    <Image src={emergency.image} alt={emergency.imageAlt} widths={[640, 960, 1400]} sizes="(min-width: 1024px) 50vw, 100vw" format="webp" loading="lazy" />
+    <AiBadge />
+  </div>
+  <div class="emergency__copy">
+    <span class="label" data-reveal>Notfall</span>
+    <h2 id="notfall-title" data-reveal style="--i:1">{emergency.title}</h2>
+    <p data-reveal style="--i:2">{emergency.text}</p>
+    <a class="emergency__number" href={company.phoneHref} data-reveal style="--i:3">
+      <Icon name="phone" size={30} />{company.phoneDisplay}
+    </a>
+    <div class="btn-row" data-reveal style="--i:4">
+      <a class="btn btn--sos" href={company.phoneHref}><Icon name="phone" /><span>Jetzt anrufen</span></a>
+      <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp schreiben</span></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .emergency {
+    display: grid;
+    background: var(--dark);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .emergency h2 { color: #fff; }
+  .emergency__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+  .emergency__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .emergency__copy {
+    padding: clamp(56px, 8vw, 112px) var(--gutter);
+    max-width: 640px;
+  }
+  .emergency__copy p { margin-top: 1.25rem; font-size: 1.125rem; }
+  .emergency__number {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 2rem 0 1.75rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-decoration: none;
+  }
+  .emergency__number .icon { color: var(--primary-light); }
+  .emergency__number:hover { color: var(--primary-tint); }
+
+  @media (min-width: 1024px) {
+    .emergency { grid-template-columns: 1fr 1fr; align-items: center; }
+    .emergency__media { aspect-ratio: auto; height: 100%; min-height: 600px; }
+    .emergency__copy {
+      padding-left: clamp(48px, 6vw, 96px);
+      padding-right: max(var(--gutter), calc((100vw - var(--container)) / 2));
+      max-width: none;
+    }
+  }
+</style>

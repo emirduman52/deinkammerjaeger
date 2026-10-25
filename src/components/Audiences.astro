@@ -1,0 +1,61 @@
+---
+import { withBase } from '../lib/url';
+import Icon from './Icon.astro';
+import { audiences, company } from '../data/site';
+---
+
+<section class="section audiences" id="zielgruppen" aria-labelledby="zielgruppen-title">
+  <div class="container">
+    <header class="section-head section-head--split">
+      <div>
+        <span class="label" data-reveal>Für wen wir arbeiten</span>
+        <h2 id="zielgruppen-title" data-reveal style="--i:1">In diesen Fällen sind wir für Sie da</h2>
+      </div>
+      <p class="section-head__lead" data-reveal style="--i:2">
+        Ob Mietwohnung oder Großküche: Wir kennen die Anforderungen Ihres Objekts und stimmen Termine und Vorgehen darauf ab.
+      </p>
+    </header>
+
+    <ul class="audiences__grid">
+      {audiences.map((a, i) => (
+        <li class="card audience" data-reveal style={`--i:${i % 3}`}>
+          <span class="icon-badge"><Icon name={a.icon} /></span>
+          <h3>{a.title}</h3>
+          <p>{a.text}</p>
+        </li>
+      ))}
+    </ul>
+
+    <p class="audiences__cta" data-reveal>
+      Sie betreuen ein Objekt und suchen einen festen Ansprechpartner?
+      <a href={company.phoneHref}>Sprechen Sie uns an: {company.phoneDisplay}</a>
+      <br /><a class="audiences__biz" href={withBase('/gewerbekunden')}>Alles für Gewerbekunden <span aria-hidden="true">→</span></a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .audiences__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .audience {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    padding: 1.75rem;
+  }
+  .audience .icon-badge { margin-bottom: 0.5rem; }
+  .audience p { color: var(--muted); font-size: 1rem; }
+  .audiences__cta {
+    margin-top: 2.5rem;
+    font-size: 1.125rem;
+  }
+  .audiences__cta a { font-weight: 700; white-space: nowrap; }
+  .audiences__biz { display: inline-block; margin-top: 0.75rem; }
+  @media (min-width: 640px) { .audiences__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+  @media (min-width: 1024px) { .audiences__grid { grid-template-columns: repeat(3, 1fr); } }
+</style>

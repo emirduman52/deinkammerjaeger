@@ -1,0 +1,117 @@
+---
+/**
+ * Kundenstimmen-Slider.
+ * Wird nur gerendert, wenn showTestimonials in src/data/site.ts auf true steht.
+ * Bitte ausschließlich echte Bewertungen (mit Einverständnis) eintragen.
+ */
+import Icon from './Icon.astro';
+import { testimonials, showTestimonials, showGoogleReviewsButton, company } from '../data/site';
+import { isPlaceholder } from '../lib/format';
+
+const showGoogle = showGoogleReviewsButton && !isPlaceholder(company.googleReviewsUrl);
+---
+
+{showTestimonials && testimonials.length > 0 && (
+  <section class="section testimonials" id="kundenstimmen" aria-labelledby="kundenstimmen-title">
+    <div class="container">
+      <header class="section-head section-head--split">
+        <div>
+          <span class="label">Kundenstimmen</span>
+          <h2 id="kundenstimmen-title">Was unsere Kunden sagen</h2>
+        </div>
+        <div class="slider__controls">
+          <button type="button" class="slider__btn" data-slider-prev aria-label="Vorherige Bewertung"><Icon name="chevron-left" /></button>
+          <button type="button" class="slider__btn" data-slider-next aria-label="Nächste Bewertung"><Icon name="chevron-right" /></button>
+        </div>
+      </header>
+
+      <div class="slider" data-slider role="region" aria-roledescription="Karussell" aria-label="Kundenstimmen">
+        <ul class="slider__track" data-slider-track tabindex="0">
+          {testimonials.map((t, i) => (
+            <li class="card slide" role="group" aria-roledescription="Bewertung" aria-label={`${i + 1} von ${testimonials.length}`}>
+              <div class="slide__stars" aria-hidden="true">
+                {Array.from({ length: 5 }).map(() => <Icon name="star" size={18} />)}
+              </div>
+              <blockquote>
+                <p>„{t.text}“</p>
+                <footer><strong>{t.name}</strong> · {t.place}</footer>
+              </blockquote>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {showGoogle && (
+        <a class="btn btn--outline testimonials__google" href={company.googleReviewsUrl} target="_blank" rel="noopener">
+          Bewertungen auf Google ansehen <Icon name="arrow-right" />
+        </a>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .slider__controls { display: flex; gap: 10px; justify-self: end; }
+  .slider__btn {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--primary-dark);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .slider__btn:hover { background: var(--primary); color: #fff; }
+  .slider__btn:disabled { opacity: 0.35; cursor: default; background: #fff; color: var(--primary-dark); }
+  .slider__track {
+    list-style: none;
+    margin: 0;
+    padding: 8px 4px 24px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88%, 380px);
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .slider__track::-webkit-scrollbar { display: none; }
+  .slide { scroll-snap-align: start; padding: 1.75rem; }
+  .slide__stars { display: flex; gap: 2px; color: var(--primary); margin-bottom: 1rem; }
+  .slide__stars :global(.icon) { fill: currentColor; }
+  .slide blockquote { margin: 0; }
+  .slide p { font-size: 1.0625rem; }
+  .slide footer { margin-top: 1rem; color: var(--muted); font-size: 0.9375rem; }
+  .testimonials__google { margin-top: 1.5rem; }
+  @media (min-width: 1024px) {
+    .slider__track { grid-auto-columns: calc((100% - 48px) / 3); }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((slider) => {
+    const section = slider.closest('section');
+    const track = slider.querySelector<HTMLElement>('[data-slider-track]');
+    const prev = section?.querySelector<HTMLButtonElement>('[data-slider-prev]');
+    const next = section?.querySelector<HTMLButtonElement>('[data-slider-next]');
+    if (!track || !prev || !next) return;
+
+    const step = () => (track.firstElementChild as HTMLElement | null)?.offsetWidth ?? track.clientWidth;
+    const update = () => {
+      prev.disabled = track.scrollLeft <= 4;
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    };
+    prev.addEventListener('click', () => track.scrollBy({ left: -step() - 24 }));
+    next.addEventListener('click', () => track.scrollBy({ left: step() + 24 }));
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); next.click(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prev.click(); }
+    });
+    track.addEventListener('scroll', update, { passive: true });
+    update();
+  });
+</script>

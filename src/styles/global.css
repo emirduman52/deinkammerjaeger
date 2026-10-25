@@ -1,0 +1,314 @@
+/* Schriften lokal (keine Anfragen an Google) */
+@import '@fontsource/montserrat/latin-600.css';
+@import '@fontsource/montserrat/latin-700.css';
+@import '@fontsource/montserrat/latin-800.css';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+
+:root {
+  /* Markenfarben (am Logo ausgerichtet) */
+  --primary: #0B7FCB;
+  --primary-light: #2A9BE0;
+  --primary-dark: #095F9B;
+  --primary-tint: #8FCBF1; /* helle Variante für Text auf dunklem Grund */
+  --primary-wash: #E3F0FA; /* Icon-Flächen, Chips */
+  --dark: #3A3B3D;
+  --dark-deep: #2C2D2F;
+  --bg: #FFFFFF;
+  --bg-soft: #F2F6FA;
+  --muted: #5E6166;
+  --line: #DCE4EC;
+  --whatsapp: #25D366;
+  --whatsapp-dark: #1DA851;
+
+  --font-display: 'Montserrat', system-ui, sans-serif;
+  --font-text: 'Inter', system-ui, sans-serif;
+
+  --radius-btn: 10px;
+  --radius-card: 16px;
+  --shadow-card: 0 1px 2px rgba(20, 40, 60, 0.06), 0 8px 24px rgba(20, 40, 60, 0.07);
+  --shadow-card-hover: 0 2px 4px rgba(20, 40, 60, 0.08), 0 18px 40px rgba(11, 127, 203, 0.16);
+
+  --container: 1200px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --section-y: clamp(80px, 10vw, 136px);
+  --header-h: 80px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--dark);
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--dark);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+h2 { font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3rem); font-weight: 800; hyphens: auto; overflow-wrap: break-word; }
+h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+p { margin: 0; text-wrap: pretty; }
+
+a { color: var(--primary-dark); text-underline-offset: 0.2em; }
+a:hover { color: var(--primary); }
+
+:focus-visible {
+  outline: 3px solid var(--primary-light);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.on-dark :focus-visible { outline-color: #fff; }
+
+::selection { background: var(--primary); color: #fff; }
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: var(--section-y); }
+.section--soft { background: var(--bg-soft); }
+.section--dark { background: var(--dark); color: #fff; }
+.section--dark h2, .section--dark h3 { color: #fff; }
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px; top: -100px;
+  z-index: 200;
+  background: var(--primary-dark);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+}
+.skip-link:focus { top: 12px; color: #fff; }
+
+/* Section-Kopf */
+.label {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+}
+.on-dark .label, .section--dark .label { color: var(--primary-tint); }
+
+.section-head {
+  display: grid;
+  gap: 1.25rem 4rem;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+.section-head__lead {
+  font-size: 1.125rem;
+  color: var(--muted);
+  max-width: 34rem;
+}
+@media (min-width: 960px) {
+  .section-head--split {
+    grid-template-columns: 1.15fr 1fr;
+    align-items: end;
+  }
+  .section-head--split .section-head__lead { justify-self: end; }
+}
+
+/* Buttons */
+.btn {
+  --btn-bg: var(--primary);
+  --btn-bg-hover: var(--primary-dark);
+  --btn-fg: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 56px;
+  padding: 0.85rem 1.5rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-btn);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1875rem; /* ≥ 18.66px fett = „großer Text“ nach WCAG */
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover {
+  background: var(--btn-bg-hover);
+  color: var(--btn-fg);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(11, 127, 203, 0.28);
+}
+.btn:active { transform: translateY(0) scale(0.98); box-shadow: none; }
+.btn .icon { width: 1.25em; height: 1.25em; flex: none; }
+
+.btn--sos {
+  background: linear-gradient(120deg, var(--primary) 0%, var(--primary) 35%, var(--primary-light) 100%);
+}
+.btn--sos:hover {
+  background: var(--primary-dark);
+}
+
+.btn--whatsapp {
+  --btn-bg: var(--whatsapp);
+  --btn-bg-hover: var(--whatsapp-dark);
+  --btn-fg: #0E2A1A;
+}
+.btn--whatsapp:hover { box-shadow: 0 10px 24px rgba(37, 211, 102, 0.3); }
+
+.btn--outline {
+  --btn-bg: transparent;
+  --btn-bg-hover: var(--primary-dark);
+  --btn-fg: var(--primary-dark);
+  border-color: var(--primary);
+}
+.btn--outline:hover { --btn-fg: #fff; border-color: var(--primary-dark); }
+
+.btn--outline-light {
+  --btn-bg: transparent;
+  --btn-bg-hover: #fff;
+  --btn-fg: #fff;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+.btn--outline-light:hover { --btn-fg: var(--dark); box-shadow: none; }
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+@media (max-width: 479px) {
+  .btn-row .btn { flex: 1 1 100%; }
+}
+
+/* Karten */
+.card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.card::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+.card:hover, .card:has(:focus-visible) {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card-hover);
+}
+.card:hover::after, .card:has(:focus-visible)::after { transform: scaleX(1); }
+
+/* Fadenkreuz-Markierung: dünner Ring mit vier Zielstrichen statt Icon-Kachel */
+.icon-badge,
+.reticle {
+  --reticle-ring: rgba(11, 127, 203, 0.35);
+  --reticle-tick: var(--primary);
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--reticle-ring);
+  color: var(--dark);
+  flex: none;
+}
+.icon-badge::before,
+.reticle::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--reticle-tick), var(--reticle-tick)) top center / 2px 11px no-repeat,
+    linear-gradient(var(--reticle-tick), var(--reticle-tick)) bottom center / 2px 11px no-repeat,
+    linear-gradient(var(--reticle-tick), var(--reticle-tick)) left center / 11px 2px no-repeat,
+    linear-gradient(var(--reticle-tick), var(--reticle-tick)) right center / 11px 2px no-repeat;
+  transition: transform 0.5s var(--ease);
+}
+.icon-badge .icon { width: 1.45rem; height: 1.45rem; stroke-width: 1.5; }
+:where(.card, li):hover > .icon-badge::before { transform: rotate(45deg); }
+
+/* Platzhalter-Kennzeichnung (deutlich sichtbar) */
+.placeholder {
+  background: #FFF4C2;
+  color: #5A4500;
+  padding: 0 0.3em;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Scroll-Animationen – nur mit JS und ohne reduzierte Bewegung */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    transition-delay: calc(var(--i, 0) * 80ms);
+  }
+  .js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Mobil: Platz für Floating-Buttons */
+@media (max-width: 767px) {
+  body { padding-bottom: 0; }
+}
+
+/* Kein Hintergrund-Scrollen bei geöffnetem Overlay */
+html:has(dialog[open]) { overflow: hidden; }

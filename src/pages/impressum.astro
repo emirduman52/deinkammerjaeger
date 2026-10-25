@@ -1,0 +1,34 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { company } from '../data/site';
+---
+
+<LegalLayout title="Impressum | deinkammerjaeger" heading="Impressum" description="Impressum von deinkammerjaeger – Schädlingsbekämpfung, Inhaber Georgios Ziogkos, Willich.">
+  <p class="legal__note"><mark class="placeholder">[ANGABEN VOM KUNDEN / RECHTSTEXT-GENERATOR]</mark> – Dieser Text ist ein Platzhalter und muss vor Veröffentlichung durch ein geprüftes Impressum ersetzt werden.</p>
+
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <p>
+    {company.name} – {company.logoSuffix}<br />
+    Inhaber: {company.owner}<br />
+    {company.street}<br />
+    {company.zip} {company.city}
+  </p>
+
+  <h2>Kontakt</h2>
+  <p>
+    Telefon: <a href={company.phoneHref}>{company.phoneDisplay}</a><br />
+    E-Mail: <mark class="placeholder">{company.email}</mark>
+  </p>
+
+  <h2>Umsatzsteuer-ID</h2>
+  <p><mark class="placeholder">[UMSATZSTEUER-ID / STEUERNUMMER]</mark></p>
+
+  <h2>Berufsbezeichnung und berufsrechtliche Regelungen</h2>
+  <p><mark class="placeholder">[ANGABEN VOM KUNDEN, z. B. Sachkunde, zuständige Kammer, Aufsichtsbehörde]</mark></p>
+
+  <h2>Verantwortlich für den Inhalt</h2>
+  <p>{company.owner}, Anschrift wie oben</p>
+
+  <h2>Verbraucherstreitbeilegung</h2>
+  <p><mark class="placeholder">[RECHTSTEXT-GENERATOR]</mark></p>
+</LegalLayout>

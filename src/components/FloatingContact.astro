@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+import { company } from '../data/site';
+---
+
+<div class="floating" data-floating>
+  <a class="floating__btn floating__btn--wa" href={company.whatsappHref} target="_blank" rel="noopener" aria-label="WhatsApp schreiben">
+    <Icon name="whatsapp" size={28} />
+  </a>
+  <a class="floating__btn floating__btn--call" href={company.phoneHref} aria-label={`Jetzt anrufen: ${company.phoneDisplay}`}>
+    <Icon name="phone" size={26} />
+  </a>
+</div>
+
+<style>
+  .floating {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 90;
+    display: flex;
+    gap: 12px;
+    transition: transform 0.35s var(--ease), opacity 0.35s var(--ease);
+  }
+  .floating.is-hidden, .floating.is-menu-open { transform: translateY(140%); opacity: 0; pointer-events: none; }
+  .floating__btn {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(20, 30, 40, 0.28);
+    transition: transform 0.2s var(--ease);
+  }
+  .floating__btn:active { transform: scale(0.94); }
+  .floating__btn--call { background: var(--primary); }
+  .floating__btn--wa { background: var(--whatsapp); color: #0E2A1A; }
+  @media (min-width: 768px) {
+    .floating { display: none; }
+  }
+</style>

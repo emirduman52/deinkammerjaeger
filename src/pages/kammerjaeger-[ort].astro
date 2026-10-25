@@ -1,0 +1,41 @@
+---
+/**
+ * PHASE 2 – Städte-Landingpages (z. B. /kammerjaeger-duesseldorf)
+ *
+ * Vorbereitet, aber noch deaktiviert: Solange enableCityPages in
+ * src/data/site.ts auf false steht, werden keine Seiten erzeugt.
+ * Vor dem Einschalten pro Ort eigene, einzigartige Texte ergänzen
+ * (kein Duplicate Content) – siehe README.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import Contact from '../components/Contact.astro';
+import Icon from '../components/Icon.astro';
+import { locations, enableCityPages, company } from '../data/site';
+
+export function getStaticPaths() {
+  if (!enableCityPages) return [];
+  return locations.map((l) => ({ params: { ort: l.slug }, props: { location: l } }));
+}
+
+const { location } = Astro.props as { location: (typeof locations)[number] };
+---
+
+<BaseLayout
+  title={`Kammerjäger ${location.name} | deinkammerjaeger`}
+  description={`Kammerjäger in ${location.name}: schnelle, diskrete Schädlingsbekämpfung für Privat und Gewerbe. Jetzt anrufen oder WhatsApp: ${company.phoneDisplay}`}
+>
+  <section class="section section--dark on-dark">
+    <div class="container">
+      <h1 style="color:#fff">Ihr Kammerjäger in {location.name}</h1>
+      <div class="btn-row" style="margin-top:2rem">
+        <a class="btn btn--sos" href={company.phoneHref}><Icon name="phone" /><span>Jetzt anrufen</span></a>
+        <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp schreiben</span></a>
+      </div>
+    </div>
+  </section>
+  <Services />
+  <Process />
+  <Contact />
+</BaseLayout>

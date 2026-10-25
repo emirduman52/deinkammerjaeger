@@ -1,0 +1,184 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import AiBadge from './AiBadge.astro';
+import { hero, company } from '../data/site';
+
+const [numA, numB] = company.phoneDisplay.split(' ');
+---
+
+<section class="hero on-dark" id="top" aria-labelledby="hero-title">
+  <div class="hero__media">
+    <Image
+      src={hero.image}
+      alt={hero.imageAlt}
+      widths={[640, 960, 1280, 1800]}
+      sizes="(min-width: 1024px) 50vw, 100vw"
+      loading="eager"
+      fetchpriority="high"
+      format="webp"
+      class="hero__img"
+    />
+  </div>
+  <AiBadge position="bottom-right" />
+
+  <svg class="hero__arcs" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
+    <path d="M60 300a240 240 0 0 1 360-208" fill="none" stroke="var(--primary-light)" stroke-opacity="0.55" stroke-width="14" stroke-linecap="round" />
+    <path d="M540 300a240 240 0 0 1-120 208" fill="none" stroke="#C9CDD2" stroke-opacity="0.35" stroke-width="14" stroke-linecap="round" />
+  </svg>
+
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <span class="label" data-reveal>{hero.label}</span>
+      <h1 id="hero-title" data-reveal style="--i:1">{hero.title}</h1>
+      <p class="hero__intro" data-reveal style="--i:2">{hero.intro}</p>
+    </div>
+
+    <div class="hero__call">
+      <p class="hero__call-label" data-reveal style="--i:3">{hero.callLabel}</p>
+      <a class="hero__number" href={company.phoneHref} aria-label={`Jetzt anrufen: ${company.phoneDisplay}`} data-monument>
+        <span>{numA}</span> <span>{numB}</span>
+      </a>
+      <div class="hero__actions" data-reveal style="--i:4">
+        <div class="btn-row">
+          <a class="btn btn--sos" href={company.phoneHref}><Icon name="phone" /><span>Jetzt anrufen</span></a>
+          <a class="btn btn--whatsapp" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" /><span>WhatsApp schreiben</span></a>
+        </div>
+        <p class="hero__note">{hero.note}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--dark);
+    color: #fff;
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .hero__media::after {
+    /* dunkelblauer Overlay für Lesbarkeit */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(18, 38, 58, 0.78);
+  }
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 30%;
+  }
+  .hero__arcs {
+    position: absolute;
+    z-index: -1;
+    width: min(90vw, 560px);
+    right: -22%;
+    top: -6%;
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-top: clamp(48px, 8vw, 88px);
+    padding-bottom: clamp(40px, 6vw, 64px);
+  }
+  .hero h1 {
+    color: #fff;
+    font-weight: 800;
+    font-size: clamp(2rem, 1.3rem + 2.4vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .hero__intro {
+    margin-top: 1.5rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 36rem;
+  }
+
+  .hero__call-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--primary-tint);
+  }
+  .hero__number {
+    display: block;
+    margin: 0.25rem 0 1.75rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 17.5vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    transform-origin: left bottom;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero__number span { display: inline-block; transition: color 0.25s var(--ease); }
+  .hero__number span:last-child { color: var(--primary-light); }
+  .hero__number:hover span:first-child { color: var(--primary-tint); }
+  .hero__number:hover span:last-child { color: #fff; }
+  .hero__number:focus-visible { outline-offset: 8px; }
+
+  .hero__actions { display: grid; gap: 1rem; }
+  .hero__note { font-size: 0.975rem; color: rgba(255, 255, 255, 0.78); }
+
+  /* Nummer ist ca. 8,1em breit („77320888“ allein ca. 5,2em) – Größen so gewählt, dass sie exakt in den Satzspiegel passt */
+  @media (max-width: 599px) {
+    .hero__number span { display: block; }
+    .hero__number { font-size: 17vw; }
+    .hero__media::after { background: rgba(18, 38, 58, 0.86); }
+  }
+
+  @media (min-width: 600px) and (max-width: 1023px) {
+    .hero__number { font-size: 10.8vw; }
+  }
+
+  @media (min-width: 1024px) {
+    .hero__media {
+      left: 50%;
+    }
+    .hero__media::after {
+      background: linear-gradient(90deg, var(--dark) 0%, rgba(58, 59, 61, 0.55) 30%, rgba(14, 40, 66, 0.35) 100%);
+    }
+    .hero__arcs { right: -6%; top: -18%; width: 620px; }
+    .hero__inner {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+      padding-top: 88px;
+    }
+    .hero__copy { grid-column: 1; }
+    .hero__call { grid-column: 1 / -1; }
+    .hero__number { font-size: min(calc((100vw - 64px) / 8.3), 9rem); margin-top: 0.5rem; }
+    .hero__actions {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .hero__number {
+        animation: monument linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+      @keyframes monument {
+        to { transform: scale(0.93); opacity: 0.55; }
+      }
+    }
+  }
+</style>

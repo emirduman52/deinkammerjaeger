@@ -1,0 +1,174 @@
+---
+import Icon from './Icon.astro';
+import { locations, serviceArea, company } from '../data/site';
+
+// Einfache Projektion der Koordinaten auf die Karte (gleichabstandig, cos(51°) für die Länge)
+const k = 1098;
+const project = (lat: number, lon: number) => ({
+  x: Math.round(70 + (lon - 6.44) * 0.63 * k),
+  y: Math.round(48 + (51.34 - lat) * k),
+});
+// Beschriftung: Versatz und Ausrichtung je Ort, damit sich nichts überlappt
+const labelPos: Record<string, { dx: number; dy: number; anchor: 'start' | 'end' | 'middle' }> = {
+  willich: { dx: -14, dy: -10, anchor: 'end' },
+  krefeld: { dx: 14, dy: 6, anchor: 'start' },
+  moenchengladbach: { dx: -6, dy: 30, anchor: 'start' },
+  kaarst: { dx: -12, dy: 22, anchor: 'end' },
+  meerbusch: { dx: 12, dy: -8, anchor: 'start' },
+  neuss: { dx: 12, dy: 20, anchor: 'start' },
+  duesseldorf: { dx: 14, dy: 6, anchor: 'start' },
+  koeln: { dx: -14, dy: 6, anchor: 'end' },
+};
+const points = locations.map((l) => ({ ...l, ...project(l.lat, l.lon), label: labelPos[l.slug] ?? { dx: 12, dy: 5, anchor: 'start' } }));
+const home = points.find((p) => p.slug === 'willich') ?? points[0];
+// Rhein, stark vereinfacht (Köln → Düsseldorf → Krefeld-Uerdingen)
+const rhine = [
+  [6.99, 50.9], [6.96, 50.96], [6.93, 51.03], [6.87, 51.09], [6.83, 51.13], [6.77, 51.17], [6.74, 51.21], [6.76, 51.25], [6.72, 51.29], [6.67, 51.33], [6.64, 51.37],
+].map(([lon, lat]) => project(lat, lon));
+const rhinePath = 'M' + rhine.map((p) => `${p.x} ${p.y}`).join(' L');
+---
+
+<section class="section section--soft area" id="einsatzgebiet" aria-labelledby="einsatzgebiet-title">
+  <div class="container area__grid">
+    <div class="area__copy">
+      <span class="label" data-reveal>Einsatzgebiet</span>
+      <h2 id="einsatzgebiet-title" data-reveal style="--i:1">{serviceArea.title}</h2>
+      <p class="area__text" data-reveal style="--i:2">{serviceArea.text}</p>
+
+      <ul class="chips" aria-label="Orte im Einsatzgebiet">
+        {locations.map((l, i) => (
+          <li data-reveal style={`--i:${Math.min(i, 6)}`}>
+            <button type="button" class="chip" data-city={l.slug} aria-pressed={l.slug === home.slug ? 'true' : 'false'}>
+              <Icon name="map-pin" size={18} />{l.name}
+            </button>
+          </li>
+        ))}
+        <li class="chip chip--more" data-reveal style="--i:6">und Umgebung</li>
+      </ul>
+
+      <div class="btn-row" data-reveal>
+        <a class="btn" href="#kontakt"><Icon name="send" /><span>Jetzt anfragen</span></a>
+        <a class="btn btn--outline" href={company.phoneHref}><Icon name="phone" /><span>Anrufen</span></a>
+      </div>
+    </div>
+
+    <figure class="area__map" data-reveal style="--i:2">
+      <svg viewBox="0 0 520 560" role="img" aria-labelledby="map-title">
+        <title id="map-title">Karte des Einsatzgebiets rund um Willich: Krefeld, Mönchengladbach, Kaarst, Meerbusch, Neuss, Düsseldorf und Köln</title>
+        <g fill="none" stroke-linecap="round">
+          <circle cx={home.x} cy={home.y} r="150" stroke="#D5E3EF" stroke-width="2" />
+          <circle cx={home.x} cy={home.y} r="300" stroke="#E1EAF2" stroke-width="2" />
+          <path d={`M${home.x - 150} ${home.y}A150 150 0 0 1 ${home.x + 75} ${home.y - 130}`} stroke="var(--primary)" stroke-opacity="0.5" stroke-width="10" />
+          <path d={`M${home.x + 300} ${home.y}A300 300 0 0 1 ${home.x + 150} ${home.y + 260}`} stroke="#B9BEC4" stroke-opacity="0.7" stroke-width="10" />
+        </g>
+        <path d={rhinePath} fill="none" stroke="#A9D1EE" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+        <text x={rhine[3].x + 16} y={rhine[3].y + 4} class="map__river">Rhein</text>
+        <g class="map__marker" data-map-marker style={`transform: translate(${home.x}px, ${home.y}px)`}>
+          <circle r="20" class="map__pulse" />
+        </g>
+        {points.map((p) => (
+          <g class:list={['map__city', { 'map__city--home': p.slug === home.slug, 'is-active': p.slug === home.slug }]} data-city={p.slug} data-x={p.x} data-y={p.y}>
+            <circle cx={p.x} cy={p.y} r={p.slug === home.slug ? 10 : 7} class="map__dot" />
+            <text x={p.x + p.label.dx} y={p.y + p.label.dy} text-anchor={p.label.anchor}>{p.name}</text>
+          </g>
+        ))}
+      </svg>
+      <figcaption>Sitz in Willich – kurze Wege ins ganze Rheinland.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  const area = document.getElementById('einsatzgebiet');
+  const marker = area?.querySelector<SVGGElement>('[data-map-marker]');
+  if (area && marker) {
+    const select = (slug: string) => {
+      area.querySelectorAll<HTMLButtonElement>('.chip[data-city]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.city === slug)));
+      area.querySelectorAll<SVGGElement>('.map__city').forEach((g) => {
+        const on = g.dataset.city === slug;
+        g.classList.toggle('is-active', on);
+        if (on) marker.style.transform = `translate(${g.dataset.x}px, ${g.dataset.y}px)`;
+      });
+    };
+    area.addEventListener('click', (e) => {
+      const el = (e.target as Element).closest<HTMLElement | SVGGElement>('[data-city]');
+      if (el?.dataset.city) select(el.dataset.city);
+    });
+  }
+</script>
+
+<style>
+  .area__grid {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+  .area__text { margin: 1.25rem 0 2rem; font-size: 1.125rem; max-width: 34rem; }
+  .chips {
+    list-style: none;
+    margin: 0 0 2.25rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chip {
+    appearance: none;
+    border: 0;
+    color: var(--dark);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1rem 0.6rem 0.8rem;
+    border-radius: 999px;
+    background: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 1px 2px rgba(20, 40, 60, 0.06);
+    transition: transform 0.2s var(--ease), background-color 0.2s, color 0.2s;
+  }
+  .chip .icon { color: var(--primary); transition: color 0.2s; }
+  .chip:hover { transform: translateY(-2px); }
+  .chip:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .chip[aria-pressed='true'] { background: var(--primary-dark); color: #fff; }
+  .chip[aria-pressed='true'] .icon { color: #fff; }
+  .chip--more { background: transparent; box-shadow: none; color: var(--muted); padding-left: 0.4rem; }
+
+  .area__map { margin: 0; }
+  .area__map svg { width: 100%; height: auto; max-width: 520px; margin-inline: auto; overflow: hidden; }
+  .area__map figcaption { margin-top: 0.75rem; text-align: center; color: var(--muted); font-size: 0.9375rem; }
+  .map__city { cursor: pointer; }
+  .map__city text {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    fill: var(--dark);
+  }
+  .map__city--home text { font-size: 20px; font-weight: 800; }
+  .map__city text { transition: fill 0.3s; }
+  .map__city.is-active text { fill: var(--primary-dark); }
+  .map__dot { fill: var(--dark); stroke: #fff; stroke-width: 3; transform-box: fill-box; transform-origin: center; transition: fill 0.3s, transform 0.3s var(--ease); }
+  .map__city.is-active .map__dot { fill: var(--primary); transform: scale(1.3); }
+  .map__city--home.is-active .map__dot { transform: none; }
+  .map__marker { transition: transform 0.7s var(--ease); }
+  .map__pulse { fill: var(--primary); opacity: 0.18; transform-box: fill-box; transform-origin: center; }
+  .map__river { font-family: var(--font-text); font-size: 14px; font-style: italic; fill: #4F87B3; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .map__pulse { animation: pulse 2.6s var(--ease) infinite; }
+    @keyframes pulse {
+      0% { transform: scale(0.6); opacity: 0.35; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map__marker { transition: none; }
+  }
+
+  @media (min-width: 1024px) {
+    .area__grid { grid-template-columns: 6fr 5fr; gap: 4rem; }
+  }
+</style>
