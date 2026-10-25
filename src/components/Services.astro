@@ -13,7 +13,8 @@ import { services, company } from '../data/site';
         <h2 id="leistungen-title" data-reveal style="--i:1">Schädlingsbekämpfung für jeden Befall</h2>
       </div>
       <p class="section-head__lead" data-reveal style="--i:2">
-        Vom Wespennest bis zum Rattenbefall: Tippen Sie auf einen Schädling für einen kurzen Steckbrief – und übernehmen Sie ihn direkt in Ihre Anfrage.
+        <span class="services__lead-long">Vom Wespennest bis zum Rattenbefall: Tippen Sie auf einen Schädling für einen kurzen Steckbrief – und übernehmen Sie ihn direkt in Ihre Anfrage.</span>
+        <span class="services__lead-short">Tippen Sie auf einen Schädling für den Steckbrief.</span>
       </p>
     </header>
 
@@ -27,7 +28,7 @@ import { services, company } from '../data/site';
             <div class="service__body">
               <h3>{s.title}</h3>
               <p>{s.text}</p>
-              <span class="service__more" aria-hidden="true">Steckbrief ansehen <Icon name="arrow-right" size={18} /></span>
+              <span class="service__more" aria-hidden="true">Steckbrief<span class="service__more-long">&nbsp;ansehen</span> <Icon name="arrow-right" size={18} /></span>
             </div>
           </a>
           <AiBadge />
@@ -106,8 +107,19 @@ import { services, company } from '../data/site';
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .services__lead-short { display: none; }
+  @media (max-width: 639px) {
+    .services__lead-long { display: none; }
+    .services__lead-short { display: inline; }
+    .service__body { padding: 0.9rem 0.9rem 1rem; gap: 0.35rem; }
+    .service__body h3 { font-size: 1.0625rem; }
+    .service__body p { display: none; }
+    .service__more { font-size: 0.8125rem; padding-top: 0.25rem; }
+    .service__more-long { display: none; }
+    .services__other { grid-column: 1 / -1; padding: 1.5rem; }
   }
   @media (min-width: 640px) { .services__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
   @media (min-width: 1024px) { .services__grid { grid-template-columns: repeat(4, 1fr); } }

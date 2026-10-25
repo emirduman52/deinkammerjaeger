@@ -135,6 +135,7 @@ const [numA, numB] = company.phoneDisplay.split(' ');
 
   .hero__actions { display: grid; gap: 1rem; }
   .hero__note { font-size: 0.975rem; color: rgba(255, 255, 255, 0.78); }
+  @media (max-width: 599px) { .hero__note { display: none; } }
 
   /* Nummer ist ca. 8,1em breit („77320888“ allein ca. 5,2em) – Größen so gewählt, dass sie exakt in den Satzspiegel passt */
   @media (max-width: 599px) {

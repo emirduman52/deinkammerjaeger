@@ -106,12 +106,11 @@ export const navigation = [
 /* ------------------------------------------------------------------ */
 
 export const hero = {
-  label: 'Schädlingsbekämpfung am Niederrhein & im Rheinland',
+  label: 'Schädlingsbekämpfung im Rheinland',
   title: 'Ihr Kammerjäger für Düsseldorf, Köln und Umgebung',
-  intro:
-    'Wir helfen schnell, diskret und gründlich, wenn Schädlinge Ihr Zuhause oder Ihren Betrieb befallen haben – für Privatkunden ebenso wie für Gewerbe. Unser Sitz ist in Willich, von hier aus sind wir im ganzen Rheinland für Sie unterwegs.',
+  intro: 'Schnell, diskret und gründlich – für Privat und Gewerbe. Aus Willich im ganzen Rheinland für Sie unterwegs.',
   callLabel: 'Rufen Sie uns an:',
-  note: 'Bei Schädlingsnotfällen oder für eine unverbindliche Beratung.',
+  note: 'Im Notfall oder für eine unverbindliche Beratung.',
   image: imgHero,
   imageAlt: 'Kammerjäger in Schutzkleidung bei der Inspektion eines Kellerraums',
 };
@@ -121,10 +120,10 @@ export const hero = {
 /* ------------------------------------------------------------------ */
 
 export const trustItems = [
-  { icon: 'user-round', text: 'Inhabergeführt aus Willich' },
+  { icon: 'user-round', text: 'Inhabergeführt' },
   { icon: 'building-2', text: 'Privat & Gewerbe' },
-  { icon: 'message-circle', text: 'Erreichbar per Telefon & WhatsApp' },
-  { icon: 'eye-off', text: 'Diskretes Vorgehen' },
+  { icon: 'message-circle', text: 'Telefon & WhatsApp' },
+  { icon: 'eye-off', text: 'Diskret' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -307,9 +306,8 @@ export const business = {
   seoDescription:
     'Schädlingsbekämpfung für Gastronomie, Lebensmittelbetriebe, Hotels und Hausverwaltungen im Rheinland: fester Ansprechpartner, Einsätze außerhalb der Öffnungszeiten, schriftliche Dokumentation.',
   label: 'Für Gewerbekunden',
-  title: 'Schädlingsbekämpfung für Betriebe, die keinen Ausfall riskieren können',
-  intro:
-    'Ein Befall im Betrieb ist mehr als ärgerlich: Er gefährdet Hygiene, Kontrollen und den Ruf bei Ihren Gästen und Kunden. Wir handeln schnell, arbeiten diskret und dokumentieren jeden Einsatz so, dass Sie bei der nächsten Kontrolle gut dastehen.',
+  title: 'Schädlingsbekämpfung für Betriebe',
+  intro: 'Schnell, diskret und sauber dokumentiert – damit Hygiene, Kontrollen und Ihr Ruf sicher sind.',
   highlights: ['Fester Ansprechpartner', 'Einsätze außerhalb der Öffnungszeiten', 'Schriftliche Dokumentation'],
   benefits: [
     { title: 'Ein fester Ansprechpartner', text: 'Sie sprechen direkt mit dem Inhaber – vom ersten Anruf bis zur Nachkontrolle. Kein Callcenter, keine wechselnden Techniker.' },
