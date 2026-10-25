@@ -29,7 +29,7 @@ const [numA, numB] = company.phoneDisplay.split(' ');
 
   <div class="container hero__inner">
     <div class="hero__copy">
-      <span class="label" data-reveal>{hero.label}</span>
+      <span class="label hero__label" data-reveal>{hero.label}</span>
       <h1 id="hero-title" data-reveal style="--i:1">{hero.title}</h1>
       <p class="hero__intro" data-reveal style="--i:2">{hero.intro}</p>
     </div>
@@ -135,7 +135,7 @@ const [numA, numB] = company.phoneDisplay.split(' ');
 
   .hero__actions { display: grid; gap: 1rem; }
   .hero__note { font-size: 0.975rem; color: rgba(255, 255, 255, 0.78); }
-  @media (max-width: 599px) { .hero__note { display: none; } }
+  @media (max-width: 599px) { .hero__note, .hero__label { display: none; } }
 
   /* Nummer ist ca. 8,1em breit („77320888“ allein ca. 5,2em) – Größen so gewählt, dass sie exakt in den Satzspiegel passt */
   @media (max-width: 599px) {
