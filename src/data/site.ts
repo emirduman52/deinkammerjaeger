@@ -22,7 +22,6 @@ import imgSilberfische from '../assets/images/leistung-silberfische.jpg';
 import imgMotten from '../assets/images/leistung-motten.jpg';
 import imgMarder from '../assets/images/leistung-marder.jpg';
 import imgFliegen from '../assets/images/leistung-fliegen.jpg';
-import imgSpinnen from '../assets/images/leistung-spinnen.jpg';
 
 /* ------------------------------------------------------------------ */
 /* Technische Einstellungen                                            */
@@ -110,7 +109,6 @@ export const hero = {
   title: 'Ihr Kammerjäger für Düsseldorf, Köln und Umgebung',
   intro: 'Schnell, diskret und gründlich – für Privat und Gewerbe. Aus Willich im ganzen Rheinland für Sie unterwegs.',
   callLabel: 'Rufen Sie uns an:',
-  note: 'Im Notfall oder für eine unverbindliche Beratung.',
   image: imgHero,
   imageAlt: 'Kammerjäger in Schutzkleidung bei der Inspektion eines Kellerraums',
 };
@@ -172,9 +170,6 @@ export const services: Service[] = [
   { id: 'fliegen', title: 'Fliegen', text: 'Wir reduzieren Fliegenplagen in Betrieb, Stall und Wohnhaus dauerhaft.', image: imgFliegen, alt: 'Stubenfliege',
     latin: 'Musca domestica',
     facts: [{ label: 'Erkennen', text: 'Stubenfliege: 6–8 mm, grau, vier dunkle Streifen am Rücken' }, { label: 'Brutstätten', text: 'Abfälle, Biomüll, Mist und organische Reste' }, { label: 'Saison', text: 'Massenauftreten vor allem im Sommer' }, { label: 'Risiko', text: 'Übertragen Keime auf Lebensmittel und Oberflächen' }, { label: 'Betriebe', text: 'In Gastronomie und Lebensmittelbetrieben ein Hygienethema' }], },
-  { id: 'spinnen', title: 'Spinnen', text: 'Wir befreien Keller, Garagen und Wohnräume von starkem Spinnenbefall.', image: imgSpinnen, alt: 'Hausspinne an einer weißen Wand',
-    latin: 'Araneae',
-    facts: [{ label: 'Erkennen', text: 'Netze und Gespinste in Ecken, an Fenstern und Fassaden' }, { label: 'Typische Orte', text: 'Keller, Garage, Dachboden, beleuchtete Außenwände' }, { label: 'Ursache', text: 'Viele Spinnen deuten auf viele Insekten als Nahrung hin' }, { label: 'Gefahr', text: 'Heimische Arten sind für Menschen in der Regel harmlos' }, { label: 'Wann handeln', text: 'Bei Massenbefall oder starker Belastung für Bewohner' }], },
 ];
 
 /** Zusätzliche Option im Formular-Dropdown. */

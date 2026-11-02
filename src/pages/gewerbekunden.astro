@@ -75,8 +75,17 @@ import { business, company } from '../data/site';
         <h2 id="biz-steps-title" data-reveal style="--i:1">So arbeiten wir mit Ihrem Betrieb</h2>
       </header>
       <ol class="biz-steps">
+        <!-- Desktop: eine durchgehende Wellenlinie durch alle vier Punkte -->
+        <svg class="biz-steps__path" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true" focusable="false" data-reveal>
+          <path d="M125 40C250 40 250 120 375 120C500 120 500 40 625 40C750 40 750 120 875 120" pathLength="1" />
+        </svg>
         {business.steps.map((s, i) => (
           <li class="biz-step" data-reveal style={`--i:${i}`}>
+            {i < business.steps.length - 1 && (
+              <svg class="biz-step__link" viewBox="0 0 56 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <path d={i % 2 ? 'M28 0C-8 35 64 65 28 100' : 'M28 0C64 35 -8 65 28 100'} />
+              </svg>
+            )}
             <span class="reticle biz-step__num" aria-hidden="true">{i + 1}</span>
             <h3><span class="sr-only">Schritt {i + 1}: </span>{s.title}</h3>
             <p>{s.text}</p>
@@ -220,27 +229,76 @@ import { business, company } from '../data/site';
   @media (min-width: 640px) { .biz-sectors { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
   @media (min-width: 1024px) { .biz-sectors { grid-template-columns: repeat(3, 1fr); } }
 
+  /* Ablauf als Leitfaden: geschwungene Linie verbindet die vier Schritte */
   .biz-steps {
+    --gap: 2.5rem;
+    position: relative;
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 2.5rem;
+    gap: var(--gap);
   }
-  .biz-step { display: grid; gap: 0.6rem; align-content: start; }
+  .biz-steps path {
+    fill: none;
+    stroke: var(--primary-light);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 0.012 0.012;
+    vector-effect: non-scaling-stroke;
+  }
+  .biz-step { position: relative; display: grid; gap: 0.5rem; align-content: start; padding-left: 84px; min-height: 68px; }
   .biz-step__num {
+    position: absolute;
+    left: 6px;
+    top: 0;
+    z-index: 1;
     width: 56px;
     height: 56px;
-    margin: 6px 0 0.9rem 6px;
+    background: #fff;
     --reticle-ring: var(--primary);
     font-family: var(--font-display);
     font-weight: 800;
     font-size: 1.375rem;
     color: var(--primary-dark);
   }
+  .biz-step h3 { padding-top: 0.85rem; }
   .biz-step p { color: var(--muted); }
-  @media (min-width: 640px) { .biz-steps { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px) { .biz-steps { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
+  /* Mobil/Tablet: S-Kurve vom Punkt zum nächsten Punkt */
+  .biz-step__link {
+    position: absolute;
+    left: 6px;
+    top: 56px;
+    width: 56px;
+    height: calc(100% - 56px + var(--gap));
+    overflow: visible;
+  }
+  .biz-step__link path { stroke-dasharray: 5 7; }
+  .biz-steps__path { display: none; }
+
+  @media (min-width: 1024px) {
+    /* ohne Spaltenabstand liegen die Spaltenmitten exakt bei 12,5/37,5/62,5/87,5 % der Kurve */
+    .biz-steps { --gap: 0; grid-template-columns: repeat(4, 1fr); }
+    .biz-step__link { display: none; }
+    .biz-steps__path {
+      display: block;
+      position: absolute;
+      inset: 0 0 auto;
+      width: 100%;
+      height: 160px;
+      overflow: visible;
+    }
+    .biz-steps__path path { stroke-dasharray: 1; stroke-dashoffset: 1; stroke-width: 3; }
+    .biz-steps__path.is-visible path,
+    html:not(.js) .biz-steps__path path { stroke-dashoffset: 0; transition: stroke-dashoffset 1.6s var(--ease) 0.2s; }
+    /* Punkte sitzen abwechselnd auf Wellenberg (y 40) und Wellental (y 120) */
+    .biz-step { padding: 12px 1rem 0; justify-items: center; text-align: center; }
+    /* :nth-child zählt das SVG mit → odd = Schritt 2 und 4 */
+    .biz-step:nth-child(odd) { padding-top: 92px; }
+    .biz-step__num { position: relative; left: auto; top: auto; margin-bottom: 0.9rem; }
+    .biz-step h3 { padding-top: 0; }
+    .biz-step p { max-width: 16rem; }
+  }
 
   .biz-faq { display: grid; gap: 2.5rem; }
   .biz-faq h2 { hyphens: manual; }

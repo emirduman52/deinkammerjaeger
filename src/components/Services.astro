@@ -281,7 +281,8 @@ import { services, company } from '../data/site';
     color: #fff;
   }
   .services__other .btn { margin-top: 0.5rem; }
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .services__other { grid-column: span 1; }
+  /* 10 Karten + dieses Feld über zwei Spalten = volle Reihen (2er- und 4er-Raster) */
+  @media (min-width: 640px) {
+    .services__other { grid-column: span 2; }
   }
 </style>
