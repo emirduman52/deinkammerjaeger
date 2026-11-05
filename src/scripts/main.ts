@@ -15,7 +15,7 @@ window.addEventListener('scroll', onScroll, { passive: true });
 /* Floating-Buttons ausblenden, solange der Hero mit seinen eigenen Buttons sichtbar ist
    und wenn der Footer erreicht ist (damit nichts überdeckt wird) */
 if (floating && 'IntersectionObserver' in window) {
-  const hero = document.querySelector('#top');
+  const hero = document.querySelector('#top, .biz-hero');
   const foot = document.querySelector('.footer__legal');
   const visible = new Set<Element>();
   const io = new IntersectionObserver((entries) => {

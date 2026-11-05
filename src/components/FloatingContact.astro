@@ -36,6 +36,10 @@ import { company } from '../data/site';
   .floating__btn:active { transform: scale(0.94); }
   .floating__btn--call { background: var(--primary); }
   .floating__btn--wa { background: var(--whatsapp); color: #0E2A1A; }
+  @media (max-width: 400px) {
+    .floating { right: 12px; gap: 10px; }
+    .floating__btn { width: 52px; height: 52px; }
+  }
   @media (min-width: 768px) {
     .floating { display: none; }
   }

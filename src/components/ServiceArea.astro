@@ -13,7 +13,7 @@ const labelPos: Record<string, { dx: number; dy: number; anchor: 'start' | 'end'
   willich: { dx: -14, dy: -10, anchor: 'end' },
   krefeld: { dx: 14, dy: 6, anchor: 'start' },
   moenchengladbach: { dx: -6, dy: 30, anchor: 'start' },
-  kaarst: { dx: -12, dy: 22, anchor: 'end' },
+  kaarst: { dx: -12, dy: -8, anchor: 'end' },
   meerbusch: { dx: 12, dy: -8, anchor: 'start' },
   neuss: { dx: 12, dy: 20, anchor: 'start' },
   duesseldorf: { dx: 14, dy: 6, anchor: 'start' },
@@ -26,6 +26,26 @@ const rhine = [
   [6.99, 50.9], [6.96, 50.96], [6.93, 51.03], [6.87, 51.09], [6.83, 51.13], [6.77, 51.17], [6.74, 51.21], [6.76, 51.25], [6.72, 51.29], [6.67, 51.33], [6.64, 51.37],
 ].map(([lon, lat]) => project(lat, lon));
 const rhinePath = 'M' + rhine.map((p) => `${p.x} ${p.y}`).join(' L');
+
+// Kartendetails (stilisiert): Autobahnen, Stadtflächen, Gitter
+const toPath = (pts: number[][]) => 'M' + pts.map(([lon, lat]) => { const p = project(lat, lon); return `${p.x} ${p.y}`; }).join(' L');
+const roads = [
+  { name: 'A57', pts: [[6.55, 51.38], [6.6, 51.31], [6.64, 51.24], [6.66, 51.18], [6.74, 51.12], [6.82, 51.07], [6.9, 51.0], [6.93, 50.96]] },
+  { name: 'A44', pts: [[6.38, 51.26], [6.48, 51.265], [6.56, 51.275], [6.66, 51.275], [6.74, 51.28], [6.8, 51.29]] },
+  { name: 'A52', pts: [[6.38, 51.19], [6.47, 51.2], [6.56, 51.21], [6.66, 51.22], [6.76, 51.22]] },
+  { name: 'A61', pts: [[6.38, 51.34], [6.41, 51.24], [6.45, 51.13], [6.5, 51.03], [6.55, 50.92]] },
+  { name: 'A46', pts: [[6.66, 51.18], [6.74, 51.185], [6.82, 51.19], [6.9, 51.2]] },
+  { name: 'A3', pts: [[6.88, 51.38], [6.9, 51.26], [6.92, 51.16], [6.97, 51.07], [7.05, 50.98], [7.1, 50.9]] },
+].map((r) => ({ ...r, d: toPath(r.pts) }));
+const urban = [
+  { lon: 6.79, lat: 51.23, r: 46 }, // Düsseldorf
+  { lon: 6.95, lat: 50.94, r: 50 }, // Köln
+  { lon: 6.56, lat: 51.33, r: 30 }, // Krefeld
+  { lon: 6.44, lat: 51.19, r: 32 }, // Mönchengladbach
+  { lon: 6.69, lat: 51.2, r: 22 },  // Neuss
+].map((u) => ({ ...project(u.lat, u.lon), r: u.r }));
+const gridX = Array.from({ length: 8 }, (_, i) => project(51, 6.4 + i * 0.1).x);
+const gridY = Array.from({ length: 6 }, (_, i) => project(51.4 - i * 0.1, 6.5).y);
 ---
 
 <section class="section section--soft area" id="einsatzgebiet" aria-labelledby="einsatzgebiet-title">
@@ -55,6 +75,17 @@ const rhinePath = 'M' + rhine.map((p) => `${p.x} ${p.y}`).join(' L');
     <figure class="area__map" data-reveal style="--i:2">
       <svg viewBox="0 0 520 560" role="img" aria-labelledby="map-title">
         <title id="map-title">Karte des Einsatzgebiets rund um Willich: Krefeld, Mönchengladbach, Kaarst, Meerbusch, Neuss, Düsseldorf und Köln</title>
+        <g class="map__grid" aria-hidden="true">
+          {gridX.map((x) => <line x1={x} y1="0" x2={x} y2="560" />)}
+          {gridY.map((y) => <line x1="0" y1={y} x2="520" y2={y} />)}
+        </g>
+        <g class="map__urban" aria-hidden="true">
+          {urban.map((u) => <circle cx={u.x} cy={u.y} r={u.r} />)}
+        </g>
+        <g class="map__roads" aria-hidden="true">
+          {roads.map((r) => <path d={r.d} class="map__road-casing" />)}
+          {roads.map((r) => <path d={r.d} class="map__road" />)}
+        </g>
         <g fill="none" stroke-linecap="round">
           <circle cx={home.x} cy={home.y} r="150" stroke="#D5E3EF" stroke-width="2" />
           <circle cx={home.x} cy={home.y} r="300" stroke="#E1EAF2" stroke-width="2" />
@@ -155,6 +186,11 @@ const rhinePath = 'M' + rhine.map((p) => `${p.x} ${p.y}`).join(' L');
   .map__marker { transition: transform 0.7s var(--ease); }
   .map__pulse { fill: var(--primary); opacity: 0.18; transform-box: fill-box; transform-origin: center; }
   .map__river { font-family: var(--font-text); font-size: 14px; font-style: italic; fill: #4F87B3; }
+  .map__grid line { stroke: #DCE5EE; stroke-width: 1; stroke-dasharray: 2 6; }
+  .map__urban circle { fill: #E3EAF1; }
+  .map__roads path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .map__road-casing { stroke: #fff; stroke-width: 6; }
+  .map__road { stroke: #C3CCD5; stroke-width: 2.5; }
 
   @media (prefers-reduced-motion: no-preference) {
     .map__pulse { animation: pulse 2.6s var(--ease) infinite; }

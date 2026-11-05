@@ -107,7 +107,7 @@ import { services, company } from '../data/site';
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
   .services__lead-short { display: none; }
@@ -116,13 +116,17 @@ import { services, company } from '../data/site';
     .services__lead-short { display: inline; }
     .service__body { padding: 0.9rem 0.9rem 1rem; gap: 0.35rem; }
     .service__body h3 { font-size: 1.0625rem; }
+    @media (max-width: 359px) {
+      .service__body { padding-inline: 0.75rem; }
+      .service__body h3 { font-size: 0.9375rem; }
+    }
     .service__body p { display: none; }
     .service__more { font-size: 0.8125rem; padding-top: 0.25rem; }
     .service__more-long { display: none; }
     .services__other { grid-column: 1 / -1; padding: 1.5rem; }
   }
-  @media (min-width: 640px) { .services__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
-  @media (min-width: 1024px) { .services__grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 640px) { .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+  @media (min-width: 1024px) { .services__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
   .service__link {
     display: flex;

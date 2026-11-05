@@ -286,6 +286,7 @@ export const footer = {
   links: [
     { label: 'Leistungen', href: '/#leistungen' },
     { label: 'Über uns', href: '/#ueber-uns' },
+    { label: 'Gewerbekunden', href: '/gewerbekunden' },
     { label: 'Kontakt', href: '/#kontakt' },
     { label: 'Impressum', href: '/impressum' },
     { label: 'Datenschutz', href: '/datenschutz' },

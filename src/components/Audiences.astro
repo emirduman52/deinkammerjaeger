@@ -48,14 +48,18 @@ import { audiences, company } from '../data/site';
     align-content: start;
     padding: 1.75rem;
   }
+  .audiences__grid { grid-template-columns: minmax(0, 1fr); }
+  .audience h3 { overflow-wrap: break-word; hyphens: auto; }
   .audience .icon-badge { margin-bottom: 0.5rem; }
+  @media (max-width: 479px) { .audience { padding: 1.4rem; } }
   .audience p { color: var(--muted); font-size: 1rem; }
   .audiences__cta {
     margin-top: 2.5rem;
     font-size: 1.125rem;
   }
-  .audiences__cta a { font-weight: 700; white-space: nowrap; }
+  .audiences__cta a { font-weight: 700; }
+  @media (min-width: 400px) { .audiences__cta a { white-space: nowrap; } }
   .audiences__biz { display: inline-block; margin-top: 0.75rem; }
-  @media (min-width: 640px) { .audiences__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
-  @media (min-width: 1024px) { .audiences__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 640px) { .audiences__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+  @media (min-width: 1024px) { .audiences__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 </style>
