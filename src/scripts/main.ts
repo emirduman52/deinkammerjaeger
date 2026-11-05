@@ -1,8 +1,13 @@
 /* Header: kompakt + Schatten beim Scrollen */
 const header = document.querySelector<HTMLElement>('[data-header]');
 const floating = document.querySelector<HTMLElement>('[data-floating]');
+/* Hysterese: Der Header schrumpft beim Kompaktwerden um ca. 14px, dadurch springt scrollY
+   zurück. Getrennte Schwellen (an > 48px, aus < 4px) verhindern das Flackern. */
 const onScroll = () => {
-  header?.classList.toggle('is-scrolled', window.scrollY > 12);
+  if (!header) return;
+  const y = window.scrollY;
+  if (y > 48) header.classList.add('is-scrolled');
+  else if (y < 4) header.classList.remove('is-scrolled');
 };
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
