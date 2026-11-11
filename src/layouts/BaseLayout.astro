@@ -46,7 +46,7 @@ const jsonLd = {
   },
   areaServed: locations.map((l) => ({ '@type': 'City', name: l.name })),
   sameAs: [company.instagram],
-  ...(openingHours.some((h) => isPlaceholder(h.time)) ? {} : { openingHours: openingHours.map((h) => `${h.days} ${h.time}`) }),
+  ...(openingHours.some((h) => isPlaceholder(h.time)) ? {} : { openingHours: openingHours.flatMap((h) => (h.schema ? [h.schema] : [])) }),
 };
 ---
 

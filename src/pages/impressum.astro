@@ -17,11 +17,11 @@ import { company } from '../data/site';
   <h2>Kontakt</h2>
   <p>
     Telefon: <a href={company.phoneHref}>{company.phoneDisplay}</a><br />
-    E-Mail: <mark class="placeholder">{company.email}</mark>
+    E-Mail: <a href={`mailto:${company.email}`}>{company.email}</a>
   </p>
 
-  <h2>Umsatzsteuer-ID</h2>
-  <p><mark class="placeholder">[UMSATZSTEUER-ID / STEUERNUMMER]</mark></p>
+  <h2>Steuernummer</h2>
+  <p>{company.taxNumber}</p>
 
   <h2>Berufsbezeichnung und berufsrechtliche Regelungen</h2>
   <p><mark class="placeholder">[ANGABEN VOM KUNDEN, z. B. Sachkunde, zuständige Kammer, Aufsichtsbehörde]</mark></p>

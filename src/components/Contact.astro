@@ -1,9 +1,14 @@
 ---
 import { withBase } from '../lib/url';
 import Icon from './Icon.astro';
-import { company, openingHours, services, otherPestOption, FORM_ENDPOINT } from '../data/site';
+import { company, openingHours, services, otherPestOption, FORM_ENDPOINT, WEB3FORMS_KEY } from '../data/site';
 import { withPlaceholders, isPlaceholder } from '../lib/format';
 
+interface Props {
+  /** Vorauswahl der Kundenart (Gewerbe-Seite → 'gewerbe') */
+  customerType?: 'privat' | 'gewerbe';
+}
+const { customerType = 'privat' } = Astro.props;
 const emailIsPlaceholder = isPlaceholder(company.email);
 ---
 
@@ -24,6 +29,7 @@ const emailIsPlaceholder = isPlaceholder(company.email);
         class="form"
         data-contact-form
         data-endpoint={FORM_ENDPOINT}
+        data-access-key={WEB3FORMS_KEY}
         data-email={emailIsPlaceholder ? '' : company.email}
         data-phone={company.phoneDisplay}
         data-phone-href={company.phoneHref}
@@ -31,6 +37,23 @@ const emailIsPlaceholder = isPlaceholder(company.email);
         novalidate
         data-reveal
       >
+        <fieldset class="field segment">
+          <legend>Ich bin</legend>
+          <div class="segment__options">
+            <label class="segment__option">
+              <input type="radio" name="customerType" value="privat" checked={customerType === 'privat'} data-customer-type />
+              <span>Privatkunde</span>
+            </label>
+            <label class="segment__option">
+              <input type="radio" name="customerType" value="gewerbe" checked={customerType === 'gewerbe'} data-customer-type />
+              <span>Gewerbekunde</span>
+            </label>
+          </div>
+        </fieldset>
+        <div class="field" data-company-field hidden={customerType !== 'gewerbe'}>
+          <label for="f-company">Firma</label>
+          <input id="f-company" name="company" type="text" autocomplete="organization" placeholder="z. B. Restaurant, Hausverwaltung" />
+        </div>
         <div class="form__row">
           <div class="field">
             <label for="f-name">Name <span aria-hidden="true">*</span></label>
@@ -45,9 +68,9 @@ const emailIsPlaceholder = isPlaceholder(company.email);
         </div>
         <div class="form__row">
           <div class="field">
-            <label for="f-email">E-Mail</label>
-            <input id="f-email" name="email" type="email" autocomplete="email" />
-            <p class="field__error" id="f-email-err" hidden>Bitte prüfen Sie die E-Mail-Adresse.</p>
+            <label for="f-email">E-Mail <span aria-hidden="true">*</span></label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required />
+            <p class="field__error" id="f-email-err" hidden>Bitte geben Sie eine gültige E-Mail-Adresse an.</p>
           </div>
           <div class="field">
             <label for="f-city">Ort</label>
@@ -187,6 +210,43 @@ const emailIsPlaceholder = isPlaceholder(company.email);
   .field [aria-invalid='true'] { border-color: #B3261E !important; }
   .field__error { color: #B3261E; font-size: 0.9rem; font-weight: 500; }
 
+  .field[hidden] { display: none; }
+  .segment { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .segment legend {
+    padding: 0;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+  .segment__options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border: 2px solid var(--line);
+    border-radius: var(--radius-btn);
+    background: #fff;
+  }
+  .segment__option { position: relative; cursor: pointer; }
+  .segment__option input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .segment__option span {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border-radius: calc(var(--radius-btn) - 4px);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    color: var(--muted);
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .segment__option:hover span { color: var(--dark); }
+  .segment__option input:checked + span { background: var(--primary); color: #fff; }
+  .segment__option input:focus-visible + span { outline: 2px solid var(--primary); outline-offset: 2px; }
+
   .select { position: relative; }
   .select select { appearance: none; padding-right: 3rem; cursor: pointer; }
   .select :global(.select__icon) {
@@ -300,10 +360,19 @@ const emailIsPlaceholder = isPlaceholder(company.email);
     const phoneLink = `<a href="${form.dataset.phoneHref}">${form.dataset.phone}</a>`;
     const waLink = `<a href="${form.dataset.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>`;
 
+    // Firmenfeld nur bei Gewerbekunden
+    const companyField = form.querySelector<HTMLElement>('[data-company-field]');
+    const syncCustomerType = () => {
+      const isBiz = form.querySelector<HTMLInputElement>('[data-customer-type]:checked')?.value === 'gewerbe';
+      if (companyField) companyField.hidden = !isBiz;
+    };
+    form.querySelectorAll('[data-customer-type]').forEach((r) => r.addEventListener('change', syncCustomerType));
+    form.addEventListener('reset', () => window.setTimeout(syncCustomerType));
+
     const fields: { el: HTMLInputElement | HTMLSelectElement; check: () => boolean }[] = [
       { el: form.querySelector('#f-name')!, check: () => (form.querySelector<HTMLInputElement>('#f-name')!.value.trim().length > 1) },
       { el: form.querySelector('#f-phone')!, check: () => /[0-9]{5,}/.test(form.querySelector<HTMLInputElement>('#f-phone')!.value.replace(/\D/g, '')) },
-      { el: form.querySelector('#f-email')!, check: () => { const v = form.querySelector<HTMLInputElement>('#f-email')!; return !v.value || v.checkValidity(); } },
+      { el: form.querySelector('#f-email')!, check: () => { const v = form.querySelector<HTMLInputElement>('#f-email')!; return v.value.trim() !== '' && v.checkValidity(); } },
       { el: pestSelect, check: () => pestSelect.value !== '' },
       { el: form.querySelector('#f-privacy')!, check: () => form.querySelector<HTMLInputElement>('#f-privacy')!.checked },
     ];
@@ -333,7 +402,8 @@ const emailIsPlaceholder = isPlaceholder(company.email);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.hidden = true;
-      const endpoint = (form.dataset.endpoint || '').trim();
+      const accessKey = (form.dataset.accessKey || '').trim();
+      const endpoint = accessKey ? 'https://api.web3forms.com/submit' : (form.dataset.endpoint || '').trim();
 
       let firstInvalid: HTMLElement | null = null;
       fields.forEach(({ el, check }) => {
@@ -349,10 +419,13 @@ const emailIsPlaceholder = isPlaceholder(company.email);
       delete data.website;
 
       const pestLabel = pestSelect.options[pestSelect.selectedIndex]?.text ?? data.pest;
+      const isBiz = data.customerType === 'gewerbe';
       const payload = {
+        customerType: isBiz ? 'Gewerbekunde' : 'Privatkunde',
+        company: isBiz ? data.company || '' : '',
         name: data.name,
         phone: data.phone,
-        email: data.email || '',
+        email: data.email,
         city: data.city || '',
         pest: pestLabel,
         message: data.message || '',
@@ -361,6 +434,8 @@ const emailIsPlaceholder = isPlaceholder(company.email);
         sentAt: new Date().toISOString(),
       };
 
+      const subject = `${isBiz ? 'Gewerbe-Anfrage' : 'Anfrage'}: ${payload.pest} – ${payload.city || 'ohne Ort'}`;
+
       // Fallback ohne Endpoint: E-Mail-Programm öffnen
       if (!endpoint) {
         if (!email) {
@@ -368,6 +443,8 @@ const emailIsPlaceholder = isPlaceholder(company.email);
           return;
         }
         const body = [
+          `Kundenart: ${payload.customerType}`,
+          ...(isBiz ? [`Firma: ${payload.company}`] : []),
           `Name: ${payload.name}`,
           `Telefon: ${payload.phone}`,
           `E-Mail: ${payload.email}`,
@@ -376,7 +453,7 @@ const emailIsPlaceholder = isPlaceholder(company.email);
           '',
           payload.message,
         ].join('\n');
-        window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Anfrage: ${payload.pest} – ${payload.city || 'ohne Ort'}`)}&body=${encodeURIComponent(body)}`;
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         showStatus('success', 'Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die vorbereitete Nachricht dort ab.');
         return;
       }
@@ -385,8 +462,25 @@ const emailIsPlaceholder = isPlaceholder(company.email);
       try {
         const res = await fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          // Web3Forms: deutsche Feldnamen landen 1:1 in der Mail an den Inhaber
+          body: JSON.stringify(accessKey
+            ? {
+                access_key: accessKey,
+                subject,
+                from_name: 'deinkammerjaeger – Website',
+                replyto: payload.email,
+                Kundenart: payload.customerType,
+                ...(isBiz ? { Firma: payload.company } : {}),
+                Name: payload.name,
+                Telefon: payload.phone,
+                'E-Mail': payload.email,
+                Ort: payload.city,
+                Schädlingsart: payload.pest,
+                Nachricht: payload.message,
+                Seite: payload.source,
+              }
+            : { ...payload, subject }),
         });
         if (!res.ok) throw new Error(String(res.status));
         form.reset();

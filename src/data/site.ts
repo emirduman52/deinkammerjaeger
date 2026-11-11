@@ -30,8 +30,18 @@ import imgFliegen from '../assets/images/leistung-fliegen.jpg';
 // [DOMAIN] – die Domain wird in astro.config.mjs (SITE_URL) eingetragen.
 
 /**
- * [N8N-WEBHOOK-URL] – Ziel für das Kontaktformular (POST, JSON).
- * Leer lassen = Fallback: Das Formular öffnet das E-Mail-Programm (mailto).
+ * Versand des Kontaktformulars – direkt per Mail an company.email.
+ *
+ * [WEB3FORMS-KEY] – Zugangsschlüssel von https://web3forms.com (kostenlos):
+ * Dort die Empfänger-Adresse eingeben, der Schlüssel kommt per Mail und wird hier
+ * eingetragen. Der Schlüssel ist öffentlich unbedenklich (er erlaubt nur das Senden
+ * an genau diese Adresse).
+ */
+export const WEB3FORMS_KEY = '';
+
+/**
+ * Alternative: [N8N-WEBHOOK-URL] – eigenes Ziel (POST, JSON). Wird nur genutzt,
+ * wenn WEB3FORMS_KEY leer ist. Beides leer = Fallback: E-Mail-Programm (mailto).
  */
 export const FORM_ENDPOINT = '';
 
@@ -62,7 +72,8 @@ export const company = {
   phoneE164: '+4915777320888',
   whatsappHref:
     'https://wa.me/4915777320888?text=Hallo%2C%20ich%20habe%20ein%20Sch%C3%A4dlingsproblem%20und%20ben%C3%B6tige%20Hilfe.',
-  email: '[E-MAIL]',
+  email: 'info@deinkammerjaeger.de',
+  taxNumber: '102/5297/5540',
   instagram: 'https://www.instagram.com/deinkammerjaeger/',
   instagramHandle: '@deinkammerjaeger',
   googleReviewsUrl: '[GOOGLE-PROFIL-LINK]',
@@ -70,11 +81,11 @@ export const company = {
     'https://www.google.com/maps/dir/?api=1&destination=An+der+Schettruh+10%2C+47877+Willich',
 };
 
-/** [ZEITEN] – Erreichbarkeit / Öffnungszeiten. Jede Zeile: Tage + Zeiten. */
-export const openingHours: { days: string; time: string }[] = [
-  { days: 'Montag – Freitag', time: '[ZEITEN]' },
-  { days: 'Samstag', time: '[ZEITEN]' },
-  { days: 'Sonn- und Feiertage', time: '[ZEITEN]' },
+/** Erreichbarkeit / Öffnungszeiten. Jede Zeile: Tage + Zeiten; `schema` = Format für Google (leer = nicht ausgeben). */
+export const openingHours: { days: string; time: string; schema?: string }[] = [
+  { days: 'Montag – Freitag', time: '9–18 Uhr', schema: 'Mo-Fr 09:00-18:00' },
+  { days: 'Samstag', time: '10–15 Uhr', schema: 'Sa 10:00-15:00' },
+  { days: 'Sonn- und Feiertage', time: 'Notdienst auf Anfrage' },
 ];
 
 /* ------------------------------------------------------------------ */

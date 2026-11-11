@@ -112,8 +112,6 @@ Alle Platzhalter stehen in eckigen Klammern und sind auf der Seite gelb markiert
 
 | Platzhalter | Wo | Was zu tun ist |
 | --- | --- | --- |
-| `[E-MAIL]` | `site.ts` → `company.email` | E-Mail-Adresse eintragen (erscheint in Kontaktkarte, Footer, Impressum, Datenschutz, Formular-Fallback, JSON-LD) |
-| `[ZEITEN]` | `site.ts` → `openingHours` | Erreichbarkeit / Öffnungszeiten eintragen (auch Zeilen anpassen) |
 | `[DOMAIN]` | `astro.config.mjs` → `SITE_URL`, `public/robots.txt` | endgültige Domain eintragen (derzeit Annahme `https://www.deinkammerjaeger.de`) |
 | `[N8N-WEBHOOK-URL]` | `site.ts` → `FORM_ENDPOINT` | Webhook-URL eintragen (leer = mailto-Fallback) |
 | `[GOOGLE-PROFIL-LINK]` | `site.ts` → `company.googleReviewsUrl` | Link zum Google-Unternehmensprofil, dann `showGoogleReviewsButton = true` |
@@ -121,7 +119,7 @@ Alle Platzhalter stehen in eckigen Klammern und sind auf der Seite gelb markiert
 | `[WEISSE LOGO-VERSION]` | `src/components/Logo.astro` (`variant="white"`, Footer) | weiße Logo-Variante einbinden |
 | Favicon | `public/favicon.svg`, `public/apple-touch-icon.png` | aus dem Käfer-Symbol des Originallogos neu erzeugen |
 | `[TEXT VOM KUNDEN FREIGEBEN]` | `site.ts` → `about` (Text + Zitat), Kommentar in `About.astro` | vom Inhaber freigeben lassen |
-| `[ANGABEN VOM KUNDEN / RECHTSTEXT-GENERATOR]` | `src/pages/impressum.astro`, `src/pages/datenschutz.astro` | vollständige Rechtstexte einsetzen, inkl. `[UMSATZSTEUER-ID / STEUERNUMMER]`, `[ANGABEN VOM KUNDEN, z. B. Sachkunde, zuständige Kammer, Aufsichtsbehörde]`, `[HOSTING-ANBIETER UND RECHTSTEXT-GENERATOR]`, `[RECHTSGRUNDLAGE, SPEICHERDAUER, EINGESETZTER DIENST]`, `[HINWEISE ZU WHATSAPP]`, `[BETROFFENENRECHTE, BESCHWERDERECHT]`, `[RECHTSTEXT-GENERATOR]` |
+| `[ANGABEN VOM KUNDEN / RECHTSTEXT-GENERATOR]` | `src/pages/impressum.astro`, `src/pages/datenschutz.astro` | vollständige Rechtstexte einsetzen, inkl. `[ANGABEN VOM KUNDEN, z. B. Sachkunde, zuständige Kammer, Aufsichtsbehörde]`, `[HOSTING-ANBIETER UND RECHTSTEXT-GENERATOR]`, `[RECHTSGRUNDLAGE, SPEICHERDAUER, EINGESETZTER DIENST]`, `[HINWEISE ZU WHATSAPP]`, `[BETROFFENENRECHTE, BESCHWERDERECHT]`, `[RECHTSTEXT-GENERATOR]` |
 | `[ECHTE KUNDENSTIMME 1–3]`, `[NAME]`, `[ORT]` | `site.ts` → `testimonials` (ausgeblendet) | nur echte Bewertungen mit Einverständnis eintragen, dann `showTestimonials = true` |
 | 15 Bild-Platzhalter | `src/assets/images/*`, `public/og-image.jpg` | siehe [`BILDER.md`](BILDER.md) |
 
